@@ -1,0 +1,84 @@
+<div ng-controller="Survey as survey">
+    <div> <!--  ng-show="survey.OldestNonHiddenAlert != null" -->
+        <div id="PageAlert" class="alert alert-primary alert-dismissible fade show margin-100-t" ng-click="survey.ShowSurvey()" style="margin-bottom: 0px;" role="alert">
+            {{survey.OldestNonHiddenAlert.Text}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="survey.CloseAlert('PageAlert', survey.OldestNonHiddenAlert.AlertIdentifier); $event.stopPropagation();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal fade" id="ModalSurvey" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Warframe Build Simulator Feedback Survey</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="SurveyForm"> <!-- action="/api/survey" method="POST" -->
+                            {{survey.OldestNonHiddenAlert.Survey.ModalPrompt}}
+                            <div ng-if="survey.OldestNonHiddenAlert.Survey.AnyQuestionsRequired" class="padding-100-t" style="color: salmon;">
+                                <b>*</b><span style="font-size: 0.8em;"> - Required</span>
+                            </div>
+                            <div ng-repeat="question in survey.OldestNonHiddenAlert.Survey.Questions track by $index" ng-class="question.ErrorMessage || '' != '' ? 'generic-box margin-100-t' : ''" style="border-color: salmon;">
+                                <div ng-class="question.ErrorMessage || '' != '' ? '' : 'padding-100-t'" ng-if="question.DisplayHtmlPrePrompt || '' != ''">
+                                    <b>
+                                        <span ng-bind-html="'#' + ($index + 1) + '. ' + question.DisplayHtmlPrePrompt | multiLine" style="display: inline-block;"></span>
+                                        <span ng-if="!question.AllowEmpty" style="color: salmon;" style="display: inline-block;">*</span>
+                                    </b>
+                                </div>
+
+                                <div style="padding-left: 15px; padding-top: 5px; padding-bottom: 5px;">
+                                    <div ng-if="question.ResponseType == 1">
+                                        <input type="text" name="{{'q' + ($index + 1)}}" style="width: 100%;">
+                                    </div>
+                                    <div ng-if="question.ResponseType == 2">
+                                        <textarea name="{{'q' + ($index + 1)}}" rows="4" cols="50"></textarea>
+                                    </div>
+                                    <div ng-if="question.ResponseType == 5">
+                                        <div ng-repeat="option in question.AllOptions">
+                                            <label style="margin-bottom: 0px;">
+                                                <input type="radio" name="{{'q' + ($parent.$index + 1)}}" value="{{option.Value}}">
+                                                {{option.DisplayText}}
+                                                <input type="text" ng-if="option.Value == null" style="width: 400px;">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div ng-if="question.ResponseType == 6">
+                                        <div ng-repeat="option in question.AllOptions">
+                                            <label style="margin-bottom: 0px;">
+                                                <input type="checkbox" name="{{'q' + ($parent.$index + 1)}}" value="{{option.Value}}">
+                                                {{option.DisplayText}}
+                                                <input type="text" ng-if="option.Value == null" style="width: 400px;">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div ng-if="question.DisplayHtmlPostPrompt || '' != ''">
+                                    <b>
+                                        <div class="padding-100-t" ng-bind-html="question.DisplayHtmlPostPrompt | multiLine"></div>
+                                    </b>
+                                </div>
+
+                                <div ng-if="question.ErrorMessage || '' != ''">
+                                    <b>
+                                        <span style="color: salmon;">
+                                            {{question.ErrorMessage}}
+                                        </span>
+                                    </b>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" ng-click="survey.SubmitSurveyForm();">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

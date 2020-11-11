@@ -1,0 +1,23 @@
+<div id="body-content" class= "div-hide-loading transition-opacity">
+    <div class="container">
+        <div ng-if="'<%- App %>' == '@warframe' + 'DO NOT SHOW WITH THIS'" id="BetaAlert" class="alert alert-primary alert-dismissible fade show margin-100-t" style="margin-bottom: 0px;" role="alert">
+            You are currently on the beta version of the site. Click here if you would rather be on the release version of the site. The beta site may contain experimental features not available on the main site.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="survey.CloseAlert('PageAlert', survey.OldestNonHiddenAlert.AlertIdentifier); $event.stopPropagation();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <%- include('../../partial/generic/survey', {}) %>
+
+        <div ng-controller="News as news">
+            <div class="row">
+                <div ng-repeat="newsMessage in news.News" class="padding-100-t col-12">
+                    <div class="generic-box col-12">
+                        <h1>{{newsMessage.Title}}</h1>
+                        <span ng-bind-html="newsMessage.Body | multiLine"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

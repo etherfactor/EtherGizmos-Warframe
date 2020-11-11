@@ -1,0 +1,1132 @@
+<div id="body-content" class= "div-hide-loading transition-opacity">
+    <div ng-controller="Tabs as tabs" class="container">
+        <%- include('../../partial/generic/survey', {}) %>
+
+        <div class="row">
+            <div class="btn-group btn-group-justified padding-100-t col-12">
+                <!--<div class="generic-box">-->
+                    <button class="btn" ng-class="{ 'btn-primary': tabs.ActiveTab == 'Modding', 'btn-secondary': tabs.ActiveTab != 'Modding' }" ng-click="tabs.SetTab('Modding');" style="width: calc(33.33% - 3.666px);">Modding</button>
+                    <button class="btn" ng-class="{ 'btn-primary': tabs.ActiveTab == 'Enemies', 'btn-secondary': tabs.ActiveTab != 'Enemies' }" ng-click="tabs.SetTab('Enemies');" style="width: calc(33.33% - 3.666px);">Enemies</button>
+                    <button class="btn" ng-class="{ 'btn-primary': tabs.ActiveTab == 'Simulate', 'btn-secondary': tabs.ActiveTab != 'Simulate' }" ng-click="tabs.SetTab('Simulate');" style="width: calc(33.33% - 3.666px);">Simulate</button>
+                <!--</div>-->
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div ng-controller="Weapons as weapons" ng-show="tabs.ActiveTab == 'Modding'" class="padding-100-t col-lg-4 col-md-5">
+                <div class="generic-box clearfix" style="height:100%;">
+                    <button ng-click="weapons.PrepareWeapon();" class="btn btn-primary" style="width: 100%;">Change Weapon</button>
+                    <div class="img-weapon" style="width: 100%;">
+                        <img ng-src="/images/weapons/{{weapons.ActiveWeapon.Image}}">
+                        <div class="name">{{weapons.ActiveWeapon.Name}}</div>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Display Base Stats</span>
+                        <span class="wep-stat-val">
+                            <label class="switch">
+                                <input type="checkbox" ng-model="weapons.ShowBaseStats">
+                                <span class="slider round"></span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Trigger</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ActiveWeapon.FiringModes.length == 1">
+                                {{weapons.ActiveWeapon.FiringMode.Name}}
+                            </span>
+                            <select class="inline" ng-model="weapons.SelectedFiringMode" ng-change="weapons.SetFiringMode(SelectedFiringMode);" ng-show="weapons.ActiveWeapon.FiringModes.length > 1" style="min-width: 100px;">
+                                <option ng-repeat="firingMode in weapons.ActiveWeapon.FiringModes track by firingMode.UrlName" ng-attr-value="{{firingMode.UrlName}}">{{firingMode.Name}}</option>
+                            </select>
+                        </span>
+                    </div>
+
+                    <div ng-show="weapons.ActiveWeapon.AdditionalSettingsHtml != undefined">
+                        <div class="spacing-50"></div>
+                        
+                        <div sim-bind-unsafe-html="weapons.ActiveWeapon.AdditionalSettingsHtml"></div>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Magazine</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseMagazineSize != weapons.ActiveWeapon.MagazineSize">
+                                {{weapons.ActiveWeapon.BaseMagazineSize | number : 0}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.MagazineSize | number : 0}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Reload</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseReloadDuration != weapons.ActiveWeapon.ReloadDuration">
+                                {{weapons.ActiveWeapon.BaseReloadDuration | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.ReloadDuration | number : 1}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Fire Rate</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseFireRate != weapons.ActiveWeapon.FireRate">
+                                {{weapons.ActiveWeapon.BaseFireRate | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.FireRate | number : 1}}
+                        </span>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Critical Chance</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseCriticalChance != weapons.ActiveWeapon.CriticalChance">
+                                {{weapons.ActiveWeapon.BaseCriticalChance*100 | number : 1}}% ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.CriticalChance*100 | number : 1}}%
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Critical Multiplier</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseCriticalMultiplier != weapons.ActiveWeapon.CriticalMultiplier">
+                                {{weapons.ActiveWeapon.BaseCriticalMultiplier | number : 1}}x ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.CriticalMultiplier | number : 1}}x
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Status Chance</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseStatusChance != weapons.ActiveWeapon.StatusChance">
+                                {{weapons.ActiveWeapon.BaseStatusChance*100 | number : 1}}% ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.StatusChance*100 | number : 1}}%
+                        </span>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <span ng-if="weapons.ActiveWeapon.Residuals.length > 0">
+                        <div class="wep-stat clearfix">
+                            <span class="wep-stat-name"><b>Contact Attack</b></span>
+                            <span class="wep-stat-val"></span>
+                        </div>
+                    </span>
+
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.BasePellets != weapons.ActiveWeapon.Pellets || weapons.ActiveWeapon.Pellets != 1">
+                        <span class="wep-stat-name">Multishot</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BasePellets != weapons.ActiveWeapon.Pellets">
+                                {{1 | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.Pellets / weapons.ActiveWeapon.BasePellets | number : 1}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.BasePellets != weapons.ActiveWeapon.Pellets || weapons.ActiveWeapon.Pellets != 1">
+                        <span class="wep-stat-name">Pellets</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BasePellets != weapons.ActiveWeapon.Pellets">
+                                {{weapons.ActiveWeapon.BasePellets | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.Pellets | number : 1}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix" ng-repeat="damage in weapons.ActiveWeapon.DamageDisplay">
+                        <span class="wep-stat-name">{{damage.Name}}</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && damage.Value != damage.BaseValue">
+                                {{damage.BaseValue | number : 1}} ▸ 
+                            </span>
+                            {{damage.Value | number : 1}}
+                        </span>
+                    </div>
+
+                    <span ng-repeat="residual in weapons.ActiveWeapon.Residuals">
+                        <div class="spacing-50"></div>
+
+                        <div class="wep-stat clearfix">
+                            <span class="wep-stat-name"><b>Area Attack</b></span>
+                            <span class="wep-stat-val"></span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-show="residual.Duration > 1">
+                            <span class="wep-stat-name">Duration</span>
+                            <span class="wep-stat-val">
+                                {{residual.Duration-0+1 | number : 0}} hits / {{residual.Duration | number : 1}}s
+                            </span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-show="residual.OverrideCriticalChance != null">
+                            <span class="wep-stat-name">Critical Chance</span>
+                            <span class="wep-stat-val">
+                                <span ng-show="weapons.ShowBaseStats && residual.BaseOverrideCriticalChance != residual.OverrideCriticalChance">
+                                    {{residual.BaseOverrideCriticalChance*100 | number : 1}}% ▸ 
+                                </span>
+                                {{weapons.ActiveWeapon.OverrideCriticalChance*100 | number : 1}}%
+                            </span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-show="residual.OverrideCriticalMultiplier != null">
+                            <span class="wep-stat-name">Critical Multiplier</span>
+                            <span class="wep-stat-val">
+                                <span ng-show="weapons.ShowBaseStats && residual.BaseOverrideCriticalMultiplier != residual.OverrideCriticalMultiplier">
+                                    {{residual.BaseOverrideCriticalMultiplier*100 | number : 1}}% ▸ 
+                                </span>
+                                {{weapons.ActiveWeapon.OverrideCriticalMultiplier*100 | number : 1}}%
+                            </span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-show="residual.OverrideStatusChance != null">
+                            <span class="wep-stat-name">Status Chance</span>
+                            <span class="wep-stat-val">
+                                <span ng-show="weapons.ShowBaseStats && residual.BaseOverrideStatusChance != residual.OverrideStatusChance">
+                                    {{residual.BaseOverrideStatusChance*100 | number : 1}}% ▸ 
+                                </span>
+                                {{weapons.ActiveWeapon.OverrideStatusChance*100 | number : 1}}%
+                            </span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-show="residual.Pellets > 1">
+                            <span class="wep-stat-name">Pellets</span>
+                            <span class="wep-stat-val">
+                                {{residual.Pellets}}
+                            </span>
+                        </div>
+
+                        <div class="wep-stat clearfix" ng-repeat="damage in residual.DamageDisplay">
+                            <span class="wep-stat-name">{{damage.Name}}</span>
+                            <span class="wep-stat-val">
+                                <span ng-show="weapons.ShowBaseStats && damage.Value != damage.BaseValue">
+                                    {{damage.BaseValue | number : 1}} ▸ 
+                                </span>
+                                {{damage.Value | number : 1}}
+                            </span>
+                        </div>
+                    </span>
+                </div>
+
+                <div class="modal fade" id="ModalWeaponSelect" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting a Weapon</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" ng-model="weapons.WeaponListFilter" placeholder="Filter Weapons" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <table id="WeaponTable" class="scroll" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th id="TableWeaponSelectSortName" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'Name' ? !weapons.WeaponTableSortReverse : false; weapons.WeaponTableSortType = 'Name';">Name
+                                                    <span ng-show="weapons.WeaponTableSortType == 'Name' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'Name' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'Name'">▴</span></th>
+                                                <th id="TableWeaponSelectSortType" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'WeaponTypeName' ? !weapons.WeaponTableSortReverse : false; weapons.WeaponTableSortType = 'WeaponTypeName';">Type
+                                                    <span ng-show="weapons.WeaponTableSortType == 'WeaponTypeName' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'WeaponTypeName' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'WeaponTypeName'">▴</span></th>
+                                                <th id="TableWeaponSelectSortRawDps" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'DPS' ? !weapons.WeaponTableSortReverse : true; weapons.WeaponTableSortType = 'DPS';">Raw DPS
+                                                    <span ng-show="weapons.WeaponTableSortType == 'DPS' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'DPS' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'DPS'">▴</span></th>
+                                                <th id="TableWeaponSelectSortStatusDps" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'StatusDPS' ? !weapons.WeaponTableSortReverse : true; weapons.WeaponTableSortType = 'StatusDPS';">Status DPS
+                                                    <span ng-show="weapons.WeaponTableSortType == 'StatusDPS' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'StatusDPS' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'StatusDPS'">▴</span></th>
+                                                <th id="TableWeaponSelectSortDamage" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'TotalDamage' ? !weapons.WeaponTableSortReverse : true; weapons.WeaponTableSortType = 'TotalDamage';">Damage
+                                                    <span ng-show="weapons.WeaponTableSortType == 'TotalDamage' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'TotalDamage' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'TotalDamage'">▴</span></th>
+                                                <th id="TableWeaponSelectSortCritical" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'CriticalDPSMultiplier' ? !weapons.WeaponTableSortReverse : true; weapons.WeaponTableSortType = 'CriticalDPSMultiplier';">Critical
+                                                    <span ng-show="weapons.WeaponTableSortType == 'CriticalDPSMultiplier' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'CriticalDPSMultiplier' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'CriticalDPSMultiplier'">▴</span></th>
+                                                <th id="TableWeaponSelectSortStatus" ng-click="weapons.WeaponTableSortReverse = weapons.WeaponTableSortType == 'StatusChance' ? !weapons.WeaponTableSortReverse : true; weapons.WeaponTableSortType = 'StatusChance';">Status
+                                                    <span ng-show="weapons.WeaponTableSortType == 'StatusChance' && !weapons.WeaponTableSortReverse">▴</span>
+                                                    <span ng-show="weapons.WeaponTableSortType == 'StatusChance' && weapons.WeaponTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="weapons.WeaponTableSortType != 'StatusChance'">▴</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="weapon in weapons.Weapons | orderBy:weapons.WeaponTableSortType:weapons.WeaponTableSortReverse | filter:weapons.WeaponListFilter">
+                                                <td><button class="btn btn-primary" ng-click="weapons.SetWeaponObject(weapon);">Select</button></td>
+                                                <td style="font-size: 0.85em;">{{weapon.Name}}</td>
+                                                <td>{{weapon.WeaponTypeName}}</td>
+                                                <td>{{weapon.DPS | number : 0}}</td>
+                                                <td>{{weapon.StatusDPS | number : 0}}</td>
+                                                <td>{{weapon.TotalDamage * weapon.Pellets | number : 0}}</td>
+                                                <td>{{100*weapon.CriticalChance | number : 1}}% / {{weapon.CriticalMultiplier | number : 1}}x</td>
+                                                <td>{{100*weapon.StatusChance | number : 1}}%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Mods as mods" ng-show="tabs.ActiveTab == 'Modding'" class="padding-100-t col-lg-8 col-md-7">
+                <div class="generic-box" style="height:100%;">
+                    <button ng-click="mods.EditRiven();" class="btn btn-primary margin-100-b" style="width: 100%;">Edit Riven Mod</button>
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert" ng-show="!mods.$Alerts.GetHidden('AlertTooltip_ClickModToChange')">
+                        Click a mod below to change it.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="mods.$Alerts.SetHidden('AlertTooltip_ClickModToChange');">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="mod-box">
+                        <div class="mod-box-item" ng-repeat="x in [].constructor(8) track by $index">
+                            <div class="mod-wrapper" ng-click="mods.PrepareMod($index);">
+                                <img class="mod-border" ng-src="{{mods.ActiveWeapon.Mods[$index] != undefined ? mods.ActiveWeapon.Mods[$index].ModBorder : '/images/mods/_bg_none.png'}}">
+                                <div class="mod-center" ng-show="mods.ActiveWeapon.Mods[$index] != undefined">
+                                    <img class="mod-image" ng-src="{{mods.ActiveWeapon.Mods[$index] != undefined ? '/images/mods/aero_periphery.png' : ''}}">
+                                    <div class="mod-text">
+                                        <div class="mod-text-transition"></div>
+                                        <span class="mod-title">{{mods.ActiveWeapon.Mods[$index].Name}}</span>
+                                        <br>
+                                        <span class="mod-description">{{mods.ActiveWeapon.Mods[$index].Description}}</span>
+                                    </div>
+                                    <svg class="mod-type-svg" viewBox="0 0 100 12">
+                                        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">{{mods.ActiveWeapon.Mods[$index].ModTypeDisplay}}</text>
+                                    </svg>
+                                    <div class="mod-drain">
+                                        <svg class="mod-drain-svg" viewBox="0 0 30 12">
+                                            <text x="100%" y="65%" dominant-baseline="middle" text-anchor="end">{{mods.ActiveWeapon.Mods[$index].MaxDrain}}</text>
+                                        </svg>
+                                    </div>
+                                    <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="ModalModSelect" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting Mod #</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <label ng-if="false" class="mod-select-filter">
+                                    <span>Polarity</span>
+                                    <br>
+                                    <select ng-model="mods.ModPolarityFilter">
+                                        <option ng-value="-1">All</option>
+                                        <option ng-value="madurai">Madurai</option>
+                                        <option ng-value="naramon">Naramon</option>
+                                        <option ng-value="vazarin">Vazarin</option>
+                                        <!-- Currently not available on weapons
+            
+                                        <option value="zenurik">Zenurik</option>
+                                        <option value="unairu">Unairu</option>
+                                        <option value="precept">Precept</option>
+                                        <option value="umbra">Umbra</option>
+            
+                                        -->
+                                    </select>
+                                </label>
+                                
+                                <label class="mod-select-filter">
+                                    <span>Rarity</span>
+                                    <br>
+                                    <select ng-model="mods.ModRarityFilter">
+                                        <option ng-value="-1*1">All</option>
+                                        <option ng-value="8*1">Legendary</option>
+                                        <option ng-value="4*1">Rare</option>
+                                        <option ng-value="2*1">Uncommon</option>
+                                        <option ng-value="1*1">Common</option>
+                                        <option ng-value="16*1">Riven</option>
+                                    </select>
+                                </label>
+                                
+                                <input type="text" ng-model="mods.ModListFilter" placeholder="Filter Mods" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <span>
+                                        <div class="mod-wrapper" ng-click="mods.SetModObject(null);" style="display: inline-block; vertical-align: middle; margin: -15px;">
+                                            <img class="mod-border" src="/images/mods/_bg_none.png">
+                                            <div class="mod-center">
+                                                <svg class="mod-callout-svg" viewBox="0 0 100 16">
+                                                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">Remove Mod</text>
+                                                </svg>
+                                                <img class="mod-image" src="">
+                                                <div class="mod-text" ng-show="1==0">
+                                                    <div class="mod-text-transition"></div>
+                                                    <span class="mod-title"></span>
+                                                    <br>
+                                                    <span class="mod-description"></span>
+                                                </div>
+                                                <svg class="mod-type-svg" viewBox="0 0 100 12">
+                                                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"></text>
+                                                </svg>
+                                                <div class="mod-drain">
+                                                    <svg class="mod-drain-svg" viewBox="0 0 30 12">
+                                                        <text x="100%" y="65%" dominant-baseline="middle" text-anchor="end"></text>
+                                                    </svg>
+                                                </div>
+                                                <img class="mod-polarity" src="">
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span ng-repeat='mod in mods.FilteredMods | filter:mods.ModListFilter | filter:(mods.ModRarityFilter >= 0 ? { Rarity: mods.ModRarityFilter } : undefined):true | filter:(mods.ModPolarityFilter >= 0 ? { Polarity: mods.ModPolarityFilter } : undefined):true'>
+                                        <div class="mod-wrapper" ng-click="mods.SetModObject(mod);" style="display: inline-block; vertical-align: middle; margin: -15px;">
+                                            <img class="mod-border" ng-src="{{mod.ModBorder}}">
+                                            <div class="mod-center">
+                                                <img class="mod-image" src="/images/mods/aero_periphery.png">
+                                                <div class="mod-text">
+                                                    <div class="mod-text-transition"></div>
+                                                    <span class="mod-title">{{mod.Name}}</span>
+                                                    <br>
+                                                    <span class="mod-description">{{mod.Description}}</span>
+                                                </div>
+                                                <svg class="mod-type-svg" viewBox="0 0 100 12">
+                                                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">{{mod.ModTypeDisplay}}</text>
+                                                </svg>
+                                                <div class="mod-drain">
+                                                    <svg class="mod-drain-svg" viewBox="0 0 30 12">
+                                                        <text x="100%" y="65%" dominant-baseline="middle" text-anchor="end">{{mod.MaxDrain}}</text>
+                                                    </svg>
+                                                </div>
+                                                <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="ModalRivenEdit" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editing Riven Mod</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mod-wrapper" style="display: inline-block; vertical-align: middle; width: 250px; margin: -12.5px; margin-left: -125px; left: 50%; margin-bottom: 0px;">
+                                    <img class="mod-border" ng-src="{{mods.Riven != undefined ? mods.Riven.ModBorder : '/images/mods/_bg_none.png'}}">
+                                    <div class="mod-center" ng-show="mods.Riven != undefined">
+                                        <img class="mod-image" ng-src="{{mods.Riven != undefined ? '/images/mods/aero_periphery.png' : ''}}">
+                                        <div class="mod-text">
+                                            <div class="mod-text-transition"></div>
+                                            <span class="mod-title">{{mods.Riven.Name}}</span>
+                                            <br>
+                                            <span class="mod-description">{{mods.Riven.Description}}</span>
+                                        </div>
+                                        <svg class="mod-type-svg" viewBox="0 0 100 12">
+                                            <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">{{mods.Riven.ModTypeDisplay}}</text>
+                                        </svg>
+                                        <div class="mod-drain">
+                                            <svg class="mod-drain-svg" viewBox="0 0 30 12">
+                                                <text x="100%" y="65%" dominant-baseline="middle" text-anchor="end">{{mods.Riven.MaxDrain}}</text>
+                                            </svg>
+                                        </div>
+                                        <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
+                                    </div>
+                                </div>
+
+                                <span ng-repeat="x in [].constructor(4) track by $index">
+                                    <div class="wep-stat clearfix">
+                                        <span class="wep-stat-name">Mod Effect {{$index+1}}:</span>
+                                        <span class="wep-stat-val" style="width: 85%;">
+                                            <input type="number" max="99999" ng-model="mods.RivenModEffectPower[$index]" ng-change="mods.UpdateRivenModEffects()" style="width: 19%; text-align: right;">
+                                            <select ng-model="mods.RivenModEffects[$index]" ng-change="mods.UpdateRivenModEffects()" style="width: 80%;">
+                                                <option ng-repeat="(id, effect) in mods.ModEffects" ng-attr-value="{{id}}">{{effect}}</option>
+                                            </select>
+                                        </span>
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Enemies as enemies" ng-show="tabs.ActiveTab == 'Enemies'" class="padding-100-t col-md-3">
+                <div class="generic-box clearfix" style="height:100%;">
+                    <button ng-click="enemies.PrepareEnemy(enemies.ActiveEnemyPosition)" class="btn btn-primary" style="width: 100%;">Change Enemy</button>
+                    <div class="img-weapon" style="width: 100%;">
+                        <img ng-src="/images/enemies/{{enemies.ActiveEnemy.Image}}">
+                        <div class="name">{{enemies.ActiveEnemy.Name}}</div>
+                    </div>
+                    
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Level</span>
+                        <span class="wep-stat-val">
+                            <input ng-model="enemies.ActiveEnemy.Level" ng-change="enemies.DoLevelUrlUpdate('html-395')" ng-blur="enemies.ActiveEnemy.Level = enemies.ActiveEnemy.Level < enemies.ActiveEnemy.BaseLevel ? enemies.ActiveEnemy.BaseLevel : enemies.ActiveEnemy.Level" type="number" max="100000" style="height: 19px; width: 75px;">
+                        </span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ShieldTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Shield | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.HealthTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Health | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ArmorTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Armor | number : 0}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Damage Reduction</span>
+                        <span class="wep-stat-val">{{100 * enemies.ActiveEnemy.Armor / (enemies.ActiveEnemy.Armor + 300) | number : 1}}%</span>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="ModalEnemySelect0" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting an Enemy</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" ng-model="enemies.EnemyListFilter" placeholder="Filter Enemies" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <table class="scroll" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'Name' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'Name';">Name
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'Name'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseHealth' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseHealth';">Health
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseHealth'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'HealthTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'HealthTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'HealthTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseArmor' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseArmor';">Armor
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseArmor'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ArmorTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ArmorTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ArmorTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseShield' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseShield';">Shield
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseShield'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ShieldTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ShieldTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ShieldTypeName'">▴</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="enemy in enemies.Enemies | orderBy:enemies.EnemyTableSortType:enemies.EnemyTableSortReverse | filter:enemies.EnemyListFilter">
+                                                <td><button class="btn btn-primary" ng-click="enemies.SetEnemyObject(enemy, enemies.ActiveEnemyPosition);">Select</button></td>
+                                                <td style="font-size: 0.85em;">{{enemy.Name}}</td>
+                                                <td><span ng-show="enemy.BaseHealth > 0">{{enemy.BaseHealth | number : 0}}</span></td>
+                                                <td>{{enemy.HealthTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseArmor > 0">{{enemy.BaseArmor | number : 0}}</span></td>
+                                                <td>{{enemy.ArmorTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseShield > 0">{{enemy.BaseShield | number : 0}}</span></td>
+                                                <td>{{enemy.ShieldTypeName}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Enemies as enemies" ng-show="tabs.ActiveTab == 'Enemies'" class="padding-100-t col-md-3">
+                <div class="generic-box clearfix" style="height:100%;">
+                    <button ng-click="enemies.PrepareEnemy(enemies.ActiveEnemyPosition)" class="btn btn-primary" style="width: 100%;">Change Enemy</button>
+                    <div class="img-weapon" style="width: 100%;">
+                        <img ng-src="/images/enemies/{{enemies.ActiveEnemy.Image}}">
+                        <div class="name">{{enemies.ActiveEnemy.Name}}</div>
+                    </div>
+                    
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Level</span>
+                        <span class="wep-stat-val">
+                            <input ng-model="enemies.ActiveEnemy.Level" ng-change="enemies.DoLevelUrlUpdate('html-520')" ng-blur="enemies.ActiveEnemy.Level = enemies.ActiveEnemy.Level < enemies.ActiveEnemy.BaseLevel ? enemies.ActiveEnemy.BaseLevel : enemies.ActiveEnemy.Level" type="number" max="100000" style="height: 19px; width: 75px;">
+                        </span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ShieldTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Shield | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.HealthTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Health | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ArmorTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Armor | number : 0}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Damage Reduction</span>
+                        <span class="wep-stat-val">{{100 * enemies.ActiveEnemy.Armor / (enemies.ActiveEnemy.Armor + 300) | number : 1}}%</span>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="ModalEnemySelect1" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting an Enemy</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" ng-model="enemies.EnemyListFilter" placeholder="Filter Enemies" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <table class="scroll" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'Name' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'Name';">Name
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'Name'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseHealth' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseHealth';">Health
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseHealth'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'HealthTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'HealthTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'HealthTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseArmor' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseArmor';">Armor
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseArmor'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ArmorTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ArmorTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ArmorTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseShield' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseShield';">Shield
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseShield'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ShieldTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ShieldTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ShieldTypeName'">▴</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="enemy in enemies.Enemies | orderBy:enemies.EnemyTableSortType:enemies.EnemyTableSortReverse | filter:enemies.EnemyListFilter">
+                                                <td><button class="btn btn-primary" ng-click="enemies.SetEnemyObject(enemy, enemies.ActiveEnemyPosition);">Select</button></td>
+                                                <td style="font-size: 0.85em;">{{enemy.Name}}</td>
+                                                <td><span ng-show="enemy.BaseHealth > 0">{{enemy.BaseHealth | number : 0}}</span></td>
+                                                <td>{{enemy.HealthTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseArmor > 0">{{enemy.BaseArmor | number : 0}}</span></td>
+                                                <td>{{enemy.ArmorTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseShield > 0">{{enemy.BaseShield | number : 0}}</span></td>
+                                                <td>{{enemy.ShieldTypeName}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Enemies as enemies" ng-show="tabs.ActiveTab == 'Enemies'" class="padding-100-t col-md-3">
+                <div class="generic-box clearfix" style="height:100%;">
+                    <button ng-click="enemies.PrepareEnemy(enemies.ActiveEnemyPosition)" class="btn btn-primary" style="width: 100%;">Change Enemy</button>
+                    <div class="img-weapon" style="width: 100%;">
+                        <img ng-src="/images/enemies/{{enemies.ActiveEnemy.Image}}">
+                        <div class="name">{{enemies.ActiveEnemy.Name}}</div>
+                    </div>
+                    
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Level</span>
+                        <span class="wep-stat-val">
+                            <input ng-model="enemies.ActiveEnemy.Level" ng-change="enemies.DoLevelUrlUpdate('html-645')" ng-blur="enemies.ActiveEnemy.Level = enemies.ActiveEnemy.Level < enemies.ActiveEnemy.BaseLevel ? enemies.ActiveEnemy.BaseLevel : enemies.ActiveEnemy.Level" type="number" max="100000" style="height: 19px; width: 75px;">
+                        </span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ShieldTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Shield | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.HealthTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Health | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ArmorTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Armor | number : 0}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Damage Reduction</span>
+                        <span class="wep-stat-val">{{100 * enemies.ActiveEnemy.Armor / (enemies.ActiveEnemy.Armor + 300) | number : 1}}%</span>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="ModalEnemySelect2" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting an Enemy</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" ng-model="enemies.EnemyListFilter" placeholder="Filter Enemies" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <table class="scroll" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'Name' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'Name';">Name
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'Name'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseHealth' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseHealth';">Health
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseHealth'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'HealthTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'HealthTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'HealthTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseArmor' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseArmor';">Armor
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseArmor'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ArmorTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ArmorTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ArmorTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseShield' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseShield';">Shield
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseShield'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ShieldTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ShieldTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ShieldTypeName'">▴</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="enemy in enemies.Enemies | orderBy:enemies.EnemyTableSortType:enemies.EnemyTableSortReverse | filter:enemies.EnemyListFilter">
+                                                <td><button class="btn btn-primary" ng-click="enemies.SetEnemyObject(enemy, enemies.ActiveEnemyPosition);">Select</button></td>
+                                                <td style="font-size: 0.85em;">{{enemy.Name}}</td>
+                                                <td><span ng-show="enemy.BaseHealth > 0">{{enemy.BaseHealth | number : 0}}</span></td>
+                                                <td>{{enemy.HealthTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseArmor > 0">{{enemy.BaseArmor | number : 0}}</span></td>
+                                                <td>{{enemy.ArmorTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseShield > 0">{{enemy.BaseShield | number : 0}}</span></td>
+                                                <td>{{enemy.ShieldTypeName}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Enemies as enemies" ng-show="tabs.ActiveTab == 'Enemies'" class="padding-100-t col-md-3">
+                <div class="generic-box clearfix" style="height:100%;">
+                    <button ng-click="enemies.PrepareEnemy(enemies.ActiveEnemyPosition)" class="btn btn-primary" style="width: 100%;">Change Enemy</button>
+                    <div class="img-weapon" style="width: 100%;">
+                        <img ng-src="/images/enemies/{{enemies.ActiveEnemy.Image}}">
+                        <div class="name">{{enemies.ActiveEnemy.Name}}</div>
+                    </div>
+                    
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <span class="wep-stat-name">Level</span>
+                        <span class="wep-stat-val">
+                            <input ng-model="enemies.ActiveEnemy.Level" ng-change="enemies.DoLevelUrlUpdate('html-770')" ng-blur="enemies.ActiveEnemy.Level = enemies.ActiveEnemy.Level < enemies.ActiveEnemy.BaseLevel ? enemies.ActiveEnemy.BaseLevel : enemies.ActiveEnemy.Level" type="number" max="100000" style="height: 19px; width: 75px;">
+                        </span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ShieldTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Shield > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Shield</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Shield | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.HealthTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Health > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Health</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Health | number : 0}}</span>
+                    </div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="spacing-50"></div>
+
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor Type</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.ArmorTypeName}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Armor</span>
+                        <span class="wep-stat-val">{{enemies.ActiveEnemy.Armor | number : 0}}</span>
+                    </div>
+                    <div ng-if="enemies.ActiveEnemy.Armor > 0" class="wep-stat clearfix">
+                        <span class="wep-stat-name">Damage Reduction</span>
+                        <span class="wep-stat-val">{{100 * enemies.ActiveEnemy.Armor / (enemies.ActiveEnemy.Armor + 300) | number : 1}}%</span>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="ModalEnemySelect3" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Selecting an Enemy</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" ng-model="enemies.EnemyListFilter" placeholder="Filter Enemies" style="margin-bottom: 15px; width: 100%;">
+                                <div class="modal-select">
+                                    <table class="scroll" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'Name' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'Name';">Name
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'Name' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'Name'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseHealth' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseHealth';">Health
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseHealth' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseHealth'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'HealthTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'HealthTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'HealthTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'HealthTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseArmor' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseArmor';">Armor
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseArmor' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseArmor'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ArmorTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ArmorTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ArmorTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ArmorTypeName'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'BaseShield' ? !enemies.EnemyTableSortReverse : true; enemies.EnemyTableSortType = 'BaseShield';">Shield
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'BaseShield' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'BaseShield'">▴</span></th>
+                                                <th ng-click="enemies.EnemyTableSortReverse = enemies.EnemyTableSortType == 'ShieldTypeName' ? !enemies.EnemyTableSortReverse : false; enemies.EnemyTableSortType = 'ShieldTypeName';">Type
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && !enemies.EnemyTableSortReverse">▴</span>
+                                                    <span ng-show="enemies.EnemyTableSortType == 'ShieldTypeName' && enemies.EnemyTableSortReverse">▾</span>
+                                                    <span class='tablesort-invisible' ng-show="enemies.EnemyTableSortType != 'ShieldTypeName'">▴</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="enemy in enemies.Enemies | orderBy:enemies.EnemyTableSortType:enemies.EnemyTableSortReverse | filter:enemies.EnemyListFilter">
+                                                <td><button class="btn btn-primary" ng-click="enemies.SetEnemyObject(enemy, enemies.ActiveEnemyPosition);">Select</button></td>
+                                                <td style="font-size: 0.85em;">{{enemy.Name}}</td>
+                                                <td><span ng-show="enemy.BaseHealth > 0">{{enemy.BaseHealth | number : 0}}</span></td>
+                                                <td>{{enemy.HealthTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseArmor > 0">{{enemy.BaseArmor | number : 0}}</span></td>
+                                                <td>{{enemy.ArmorTypeName}}</td>
+                                                <td><span ng-show="enemy.BaseShield > 0">{{enemy.BaseShield | number : 0}}</span></td>
+                                                <td>{{enemy.ShieldTypeName}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Simulation as simulation" ng-show="tabs.ActiveTab == 'Simulate'" class="padding-100-t col-12">
+                <div class="generic-box clearfix">
+                    <div ng-show="simulation.SimulationProgress == 1">
+                        <button class="btn btn-primary" style="width: 100%;" ng-click="simulation.RunSimulation();">Run Simulation</button>
+                    </div>
+
+                    <div ng-hide="simulation.SimulationProgress == 1" style="margin-top: -2px;">
+                        Running simulation...
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" ng-style="{ width: (simulation.SimulationProgress * 100) + '%' }" aria-valuenow="{{simulation.SimulationProgress * 100}}" aria-valuemin="0" aria-valuemax="100">{{ simulation.SimulationProgress * 100 | number : 0 }}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Simulation as simulation" ng-show="tabs.ActiveTab == 'Simulate'" class="padding-100-t col-md-4">
+                <div class="generic-box clearfix">
+                    <div ng-show="simulation.ActiveWeapon.RivenEquipped" class="font-75 margin-100-b" style="line-height: 1em;">
+                        Weapons with a Riven equipped are not eligible for ranked simulations.
+                    </div>
+
+                    Simulation type:
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-primary w-100" ng-class="{ 'btn-primary': simulation.SimulationType == 'Random', 'btn-secondary': simulation.SimulationType != 'Random' }" ng-click="simulation.SimulationType = 'Random'">Random</button>
+                        <button class="btn btn-secondary w-100" ng-class="{ 'btn-primary': simulation.SimulationType == 'Normalized', 'btn-secondary': simulation.SimulationType != 'Normalized' }" ng-click="simulation.SimulationType = 'Normalized'">Normalized</button>
+                        <button class="btn btn-secondary w-100" ng-disabled="simulation.ActiveWeapon.RivenEquipped" ng-class="{ 'btn-primary': simulation.SimulationType == 'Ranked', 'btn-secondary': simulation.SimulationType != 'Ranked' }" ng-click="simulation.SimulationType = 'Ranked'">Ranked</button>
+                    </div>
+                    <div class="font-75" style="line-height: 1em;">{{simulation.SimulationTypeDesc[simulation.SimulationType]}}</div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <div class="wep-stat-name">Accuracy</div>
+                        <div class="wep-stat-val">
+                            <select ng-show="simulation.SimulationType != 'Ranked'" class="inline" ng-model="simulation.Accuracy" style="height: 19px;">
+                                <option ng-repeat="x in [].constructor(20) track by $index">{{5*(20-$index)}}%</option>
+                            </select>
+                            <span ng-show="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.Accuracy != '90%' ? 'var(--primary)' : 'var(--text)' }">
+                                90%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="wep-stat clearfix">
+                        <div class="wep-stat-name">Headshot/Weakpoint Chance</div>
+                        <div class="wep-stat-val">
+                            <select ng-show="simulation.SimulationType != 'Ranked'" class="inline" ng-model="simulation.Headshot" style="height: 19px;">
+                                <option ng-repeat="x in [].constructor(21) track by $index">{{5*(20-$index)}}%</option>
+                            </select>
+                            <span ng-show="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.Headshot != '50%' ? 'var(--primary)' : 'var(--text)' }">
+                                50%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <div class="wep-stat-name">Current Weapon</div>
+                        <div class="wep-stat-val">{{simulation.ActiveWeapon.Name}}</div>
+                    </div>
+
+                    <div class="spacing-50"></div>
+
+                    <div class="wep-stat clearfix">
+                        <div class="wep-stat-name">Current Enemies</div>
+                        <div class="wep-stat-val">
+                            <span ng-if="simulation.SimulationType != 'Ranked'">{{simulation.ActiveEnemy1.Name}}</span>
+                            <span ng-if="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.ActiveEnemy1.Name != 'Corrupted Heavy Gunner' ? 'var(--primary)' : 'var(--text)' }">Corrupted Heavy Gunner</span>
+                            <br>
+                            <span ng-if="simulation.SimulationType != 'Ranked'">{{simulation.ActiveEnemy2.Name}}</span>
+                            <span ng-if="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.ActiveEnemy2.Name != 'Bombard' ? 'var(--primary)' : 'var(--text)' }">Bombard</span>
+                            <br>
+                            <span ng-if="simulation.SimulationType != 'Ranked'">{{simulation.ActiveEnemy3.Name}}</span>
+                            <span ng-if="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.ActiveEnemy3.Name != 'Corpus Tech' ? 'var(--primary)' : 'var(--text)' }">Corpus Tech</span>
+                            <br>
+                            <span ng-if="simulation.SimulationType != 'Ranked'">{{simulation.ActiveEnemy4.Name}}</span>
+                            <span ng-if="simulation.SimulationType == 'Ranked'" ng-style="{ color: simulation.ActiveEnemy4.Name != 'Ancient Healer' ? 'var(--primary)' : 'var(--text)' }">Ancient Healer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-controller="Simulation as simulation" ng-show="tabs.ActiveTab == 'Simulate'" class="padding-100-t col-md-8">
+                <div class="generic-box clearfix">
+                    <span ng-show="simulation.HasSimulationData == false">
+                        Results will be displayed here when the simulation is run.
+                    </span>
+
+                    <div class="btn-group d-flex" ng-show="simulation.HasSimulationData == true">
+                        <button class="btn w-100" ng-click="simulation.ActiveSimTab = 'KillGraph'" ng-class="{ 'btn-primary': simulation.ActiveSimTab == 'KillGraph', 'btn-secondary': simulation.ActiveSimTab != 'KillGraph' }">Kill Time Graph</button>
+                        <button class="btn w-100" ng-click="simulation.ActiveSimTab = 'Enemy'" ng-class="{ 'btn-primary': simulation.ActiveSimTab == 'Enemy', 'btn-secondary': simulation.ActiveSimTab != 'Enemy' }">Enemy Results</button>
+                    </div>
+
+                    <div class="padding-100-t" ng-show="simulation.ActiveSimTab == 'KillGraph' && simulation.HasSimulationData == true">
+                        The Kill Time Graph is currently a work in progress. Keep an eye out for updates on this feature!
+                    </div>
+
+                    <div class="btn-group d-flex padding-100-t" ng-show="simulation.ActiveSimTab == 'Enemy' && simulation.HasSimulationData == true">
+                        <button class="btn w-100" ng-click="simulation.ActiveEnemyTab = 'Enemy1'" ng-class="{ 'btn-primary': simulation.ActiveEnemyTab == 'Enemy1', 'btn-secondary': simulation.ActiveEnemyTab != 'Enemy1', 'font-75': simulation.SimulationName['Enemy1'].length > 20 }">{{simulation.SimulationName['Enemy1']}}</button>
+                        <button class="btn w-100" ng-click="simulation.ActiveEnemyTab = 'Enemy2'" ng-class="{ 'btn-primary': simulation.ActiveEnemyTab == 'Enemy2', 'btn-secondary': simulation.ActiveEnemyTab != 'Enemy2', 'font-75': simulation.SimulationName['Enemy2'].length > 20 }">{{simulation.SimulationName['Enemy2']}}</button>
+                        <button class="btn w-100" ng-click="simulation.ActiveEnemyTab = 'Enemy3'" ng-class="{ 'btn-primary': simulation.ActiveEnemyTab == 'Enemy3', 'btn-secondary': simulation.ActiveEnemyTab != 'Enemy3', 'font-75': simulation.SimulationName['Enemy3'].length > 20 }">{{simulation.SimulationName['Enemy3']}}</button>
+                        <button class="btn w-100" ng-click="simulation.ActiveEnemyTab = 'Enemy4'" ng-class="{ 'btn-primary': simulation.ActiveEnemyTab == 'Enemy4', 'btn-secondary': simulation.ActiveEnemyTab != 'Enemy4', 'font-75': simulation.SimulationName['Enemy4'].length > 20 }">{{simulation.SimulationName['Enemy4']}}</button>
+                    </div>
+
+                    <div ng-show="simulation.ActiveSimTab == 'Enemy' && simulation.HasSimulationData == true && simulation.SimulationError[simulation.ActiveEnemyTab] == undefined">
+                        <div ng-repeat="bubble in simulation.SimulationData[simulation.ActiveEnemyTab].MainBubbles" ng-class="{ 'circle-wrapper-1': simulation.SimulationData[simulation.ActiveEnemyTab].Blocks[$index] == 1, 'circle-wrapper-2': simulation.SimulationData[simulation.ActiveEnemyTab].Blocks[$index] == 2 }">
+                            <div class="circle main secondary" ng-class="simulation.SimulationData[simulation.ActiveEnemyTab].Classes[$index]">
+                                <div ng-if="bubble.Image != undefined" class="img-bg">
+                                    <img ng-src="{{bubble.Image}}">
+                                </div>
+                                <div ng-if="bubble.Title != undefined" class="title">
+                                    {{bubble.Title}}
+                                </div>
+                                <div ng-if="bubble.Icon != undefined" class="title-icon">
+                                    <svg class="bi" ng-attr-width="{{bubble.Icon.Width}}" ng-attr-height="{{bubble.Icon.Height}}" ng-attr-view_box="{{bubble.Icon.ViewBox}}" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <g ng-attr-transform="{{bubble.Icon.Transform}}">
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[0]}}" ng-attr-d="{{bubble.Icon.Data[0]}}"/>
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[1]}}" ng-attr-d="{{bubble.Icon.Data[1]}}"/>
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[2]}}" ng-attr-d="{{bubble.Icon.Data[2]}}"/>
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[3]}}" ng-attr-d="{{bubble.Icon.Data[3]}}"/>
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[4]}}" ng-attr-d="{{bubble.Icon.Data[4]}}"/>
+                                            <path ng-attr-fill-rule="{{bubble.Icon.FillRule[5]}}" ng-attr-d="{{bubble.Icon.Data[5]}}"/>
+                                        </g>
+                                    </svg>
+                                </div>
+
+                                <div ng-repeat="subBubble in bubble.SubBubbles" class="circle sub primary" ng-class="subBubble.Classes" ng-click="subBubble.DoReplacement(bubble);" ng-mouseover="simulation.OnSubBubbleMouseEnter($event)" ng-mouseleave="simulation.OnSubBubbleMouseLeave($event)">
+                                    <div class="img-icon">
+                                        <svg class="bi" ng-attr-width="{{subBubble.Icon.Width}}" ng-attr-height="{{subBubble.Icon.Height}}" ng-attr-view_box="{{subBubble.Icon.ViewBox}}" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <g ng-attr-transform="{{subBubble.Icon.Transform}}">
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[0]}}" ng-attr-d="{{subBubble.Icon.Data[0]}}"/>
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[1]}}" ng-attr-d="{{subBubble.Icon.Data[1]}}"/>
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[2]}}" ng-attr-d="{{subBubble.Icon.Data[2]}}"/>
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[3]}}" ng-attr-d="{{subBubble.Icon.Data[3]}}"/>
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[4]}}" ng-attr-d="{{subBubble.Icon.Data[4]}}"/>
+                                                <path ng-attr-fill-rule="{{subBubble.Icon.FillRule[5]}}" ng-attr-d="{{subBubble.Icon.Data[5]}}"/>
+                                            </g>
+                                        </svg>
+                                        <span class="alt hidden">{{subBubble.AltName}}</span>
+                                        <span class="value">{{subBubble.Value}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="padding-100-t" ng-show="simulation.ActiveSimTab == 'Enemy' && simulation.HasSimulationData == true && simulation.SimulationError[simulation.ActiveEnemyTab] != undefined">
+                        The simulation for {{SimulationName[simulation.ActiveEnemyTab]}} resulted in an error! The error has been logged and will be fixed as soon as possible!
+                        <br><br>
+                        <!-- <button class="btn btn-primary" style="width: 100%;" ng-click="">Show Me the Nerd Stuff</button> -->
+                        <!-- <pre>{{simulation.SimulationError[simulation.ActiveEnemyTab].trim()}}</pre> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="padding-100-t"></div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<header>
+    <nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark cbg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img id="logo" src="/images/test.png">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item <%= Active == 'Index' ? 'active' : '' %>"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item <%= Active == 'Simulator' ? 'active' : '' %>"><a class="nav-link" href="/simulator">Simulator</a></li>
+                </ul>
+                
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item <%= Active == 'Discord' ? 'active' : '' %>"><a class="nav-link cbg-discord" href="/discord" target="_blank">Discord</a></li>
+                    <!--
+                    Placeholder - not implemented yet
+                    <li class="nav-item"><a class="nav-link" href=""><img height="20" width="20" src="https://img.icons8.com/ios-filled/2x/login-rounded-right.png"> Log In</a></li>
+                    -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
