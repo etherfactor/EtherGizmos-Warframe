@@ -128,6 +128,10 @@ if (false) {
             return this;
         }
 
+        Redirect(url) {
+            window.location.href = url;
+        }
+
         /**
          * 
          * @param {import('./classes').Alert} alert 

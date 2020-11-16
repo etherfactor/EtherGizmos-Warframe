@@ -3,13 +3,9 @@ var router = express.Router();
 
 var Properties = undefined;
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    res.render('pages/index', Properties);
-});
-
-router.get('/discord', function(req, res, next) {
-    res.redirect('https://discord.gg/DaVR72X');
+router.get('/:redirectUrl', function(req, res, next) {
+    console.log(`redirecting ${req.protocol} ${req.url} to ${req.params.redirectUrl}`);
+    res.redirect(`${req.protocol}://${req.params.redirectUrl}`);
 });
 
 module.exports.Router = router;

@@ -1,5 +1,12 @@
 <div ng-controller="Survey as survey">
-    <div> <!--  ng-show="survey.OldestNonHiddenAlert != null" -->
+    <div ng-if="'<%- App %>' == 'warframe-beta'" id="BetaAlert" class="alert alert-primary alert-dismissible fade show margin-100-t" style="margin-bottom: 0px;" ng-click="survey.Redirect('https://warframe.ethergizmos.com');" role="alert" ng-show="!survey.$Alerts.GetHidden('AlertTooltip_Beta')">
+        You are currently on the beta version of the site. The beta site may contain experimental features not available on the main site. Click this alert to redirect to the release version of the site.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="survey.$Alerts.SetHidden('AlertTooltip_Beta'); $event.stopPropagation();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div ng-show="survey.OldestNonHiddenAlert != null">
         <div id="PageAlert" class="alert alert-primary alert-dismissible fade show margin-100-t" ng-click="survey.ShowSurvey()" style="margin-bottom: 0px;" role="alert">
             {{survey.OldestNonHiddenAlert.Text}}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="survey.CloseAlert('PageAlert', survey.OldestNonHiddenAlert.AlertIdentifier); $event.stopPropagation();">

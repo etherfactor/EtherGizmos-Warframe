@@ -1,3 +1,6 @@
+const path = require('path');
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 //Hack to let 'module' exist in front-end
 if (typeof module == 'undefined') {
     module = { exports: {} }
@@ -89,13 +92,13 @@ if (typeof window == 'undefined') {
 
                 //Up the thread count
                 MAIN.CurrentThreads++;
-                console.log('Threads:', MAIN.CurrentThreads);
+                superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Threads: $white,bright{${MAIN.CurrentThreads}}`);
 
                 //Run the simulation
                 simulation.Simulation.Run(simulation.Accuracy, simulation.Headshot).then(() => {
                     //When it finishes, lower the thread count, and queue up the next simulation
                     MAIN.CurrentThreads--;
-                    console.log('Threads:', MAIN.CurrentThreads);
+                    superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Threads: $white,bright{${MAIN.CurrentThreads}}`);
                     MAIN.RunNextSimulation();
                 });
             });
@@ -161,8 +164,11 @@ if (typeof window == 'undefined') {
 
             //It's asynchronous
             return new Promise(function (resolve, reject) {
+                var thisScriptDir = __dirname;
+                var workerPath = path.join(__dirname, '../workers/simulation-runner.js');
+
                 //Create a worker thread
-                var w = new Worker('./scripts/@warframe/private/workers/simulation-runner.js', data);
+                var w = new Worker(workerPath, data);
 
                 //Whenever the main thread receives a message from the worker thread
                 w.on('message', (messageObject) => {

@@ -1,3 +1,5 @@
+const superconsole = require('../../../scripts/logging/superconsole');
+
 const http = require('http');
 const https = require('https');
 
@@ -13,18 +15,21 @@ const simulationController = require('../scripts/private/simulation/controller')
 const simulationData = require('../scripts/private/data/simulation');
 const $Classes = require('../scripts/public/class-definitions/classes');
 
+function Initialize(app) {
+    //Start the http server; port is set by the main script
+    httpServer.listen(app.get('websocket-http'), () => {
+        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Server started on port $white,bright{${httpServer.address().port}} :)`);
+    });
+
+    //Start the https server; port is set by the main script
+    httpsServer.listen(app.get('websocket-https'), () => {
+        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Server started on port $white,bright{${httpsServer.address().port}} :)`);
+    });
+}
+module.exports.Initialize = Initialize;
+
 httpWss.on('connection', OnConnect);
 httpsWss.on('connection', OnConnect);
-
-//Start the http server; port is 1000 + 80 + 1 per level of development removed
-httpServer.listen(1080, () => {
-    console.log(`Server started on port ${httpServer.address().port} :)`);
-});
-
-//Start the https server; port is 1000 + 443 + 1 per level of development removed
-httpsServer.listen(1443, () => {
-    console.log(`Server started on port ${httpsServer.address().port} :)`);
-});
 
 //Called when the http(s) server receives a websocket connection from a client
 function OnConnect(ws) {
@@ -36,7 +41,7 @@ function OnConnect(ws) {
 
     /**
      * Handles SimulationRequests received by the client
-     * @param {import('../../../../scripts/warframe-beta/public/class-definitions/classes').SimulationRequest} request 
+     * @param {import('../scripts/public/class-definitions/classes').SimulationRequest} request 
      */
     async function $_receiveSimulationRequest(request) {
         //Fetch settings
@@ -52,7 +57,7 @@ function OnConnect(ws) {
         }
 
         //Fetch the weapon object being simulated
-        /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Weapon} */
+        /** @type {import('../scripts/public/class-definitions/classes').Weapon} */
         var weapon = await simulationData.GetWeaponById(request.Weapon.Name);
         //Fill in mods
         for (var m = 0; m < request.Weapon.Mods.length; m++)
@@ -61,7 +66,7 @@ function OnConnect(ws) {
         }
 
         //Fetch the first enemy being simulated
-        /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Enemy} */
+        /** @type {import('../scripts/public/class-definitions/classes').Enemy} */
         var enemy1 = null;
         if (request.Enemy1 != null) {
             enemy1 = await simulationData.GetEnemyById(request.Enemy1.Name);
@@ -69,7 +74,7 @@ function OnConnect(ws) {
         }
 
         //Fetch the second enemy being simulated
-        /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Enemy} */
+        /** @type {import('../scripts/public/class-definitions/classes').Enemy} */
         var enemy2 = null;
         if (request.Enemy2 != null) {
             enemy2 = await simulationData.GetEnemyById(request.Enemy2.Name);
@@ -77,7 +82,7 @@ function OnConnect(ws) {
         }
 
         //Fetch the third enemy being simulated
-        /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Enemy} */
+        /** @type {import('../scripts/public/class-definitions/classes').Enemy} */
         var enemy3 = null;
         if (request.Enemy3 != null) {
             enemy3 = await simulationData.GetEnemyById(request.Enemy3.Name);
@@ -85,7 +90,7 @@ function OnConnect(ws) {
         }
 
         //Fetch the fourth enemy being simulated
-        /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Enemy} */
+        /** @type {import('../scripts/public/class-definitions/classes').Enemy} */
         var enemy4 = null;
         if (request.Enemy4 != null) {
             enemy4 = await simulationData.GetEnemyById(request.Enemy4.Name);
@@ -95,7 +100,7 @@ function OnConnect(ws) {
         //Set the weapon's firing mode (SEMI, AUTO, etc.)
         for (var f = 0; f < weapon.FiringModes.length; f++)
         {
-            /** @type {import('../../../../scripts/warframe-beta/public/class-definitions/classes').WeaponFiringMode} */
+            /** @type {import('../scripts/public/class-definitions/classes').WeaponFiringMode} */
             var firingMode = weapon.FiringModes[f];
             if (firingMode.UrlName == request.Weapon.FiringMode) {
                 weapon.SetFiringMode(f);
@@ -125,7 +130,7 @@ function OnConnect(ws) {
 
     /**
      * Handles SimulationProgress received by the thread
-     * @param {import('./scripts/warframe-beta/class-definitions/public/classes').SimulationProgress} progress 
+     * @param {import('../scripts/public/class-definitions/classes').SimulationProgress} progress 
      */
     function $_receiveSimulationProgress(progress) {
         //Encode it in a message
@@ -139,7 +144,7 @@ function OnConnect(ws) {
 
     /**
      * Handles Metrics received by the thread
-     * @param {import('../../../../scripts/warframe-beta/public/class-definitions/classes').Metrics} metrics 
+     * @param {import('../scripts/public/class-definitions/classes').Metrics} metrics 
      */
     function $_receiveSimulationResults(metrics) {
         //Encode it in a message
@@ -153,7 +158,7 @@ function OnConnect(ws) {
 
     /**
      * 
-     * @param {import('../../../../scripts/warframe-beta/public/class-definitions/classes').SimulationError} error 
+     * @param {import('../scripts/public/class-definitions/classes').SimulationError} error 
      */
     function $_receiveSimulationError(error) {
         //Encode it in a message
@@ -176,7 +181,7 @@ function OnConnect(ws) {
      * @param {string} message 
      */
     function OnMessage(message) {
-        console.log('received: %s', message, typeof(message));
+        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Websocket received: $white,bright{${message}}`);
 
         //Parse the object from the message
         var encodedMessage = JSON.parse(message);

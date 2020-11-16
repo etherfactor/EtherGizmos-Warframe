@@ -1,3 +1,5 @@
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 var async = require('async');
 
 var conn = require('../sql/connection');
@@ -50,7 +52,7 @@ function UpdateNews() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -72,7 +74,7 @@ function UpdateNews() {
         ],
         function(err, results) {
             News = news;
-            console.log(`Updated news as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated news as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });

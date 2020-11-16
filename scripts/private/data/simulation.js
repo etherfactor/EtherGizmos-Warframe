@@ -1,3 +1,5 @@
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 var async = require('async');
 
 var conn = require('../sql/connection');
@@ -56,7 +58,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -90,7 +92,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -145,7 +147,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -206,7 +208,7 @@ function UpdateWeapons() {
         ],
         function(err, results) {
             Weapons = weapons;
-            console.log(`Updated weapons as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated weapons as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -223,7 +225,7 @@ function UpdateMods() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -258,7 +260,7 @@ function UpdateMods() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -283,7 +285,7 @@ function UpdateMods() {
         ],
         function(err, results) {
             Mods = mods;
-            console.log(`Updated mods as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated mods as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -300,7 +302,7 @@ function UpdateModEffects() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -320,7 +322,7 @@ function UpdateModEffects() {
         ],
         function(err, results) {
             ModEffects = modEffects;
-            console.log(`Updated mod effects as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated mod effects as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -337,7 +339,7 @@ function UpdateEnemies() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -372,7 +374,7 @@ function UpdateEnemies() {
         ],
         function(err, results) {
             Enemies = enemies;
-            console.log(`Updated enemies as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated enemies as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -416,7 +418,7 @@ async function GetModById(id) {
     /** @type {import('../../public/class-definitions/classes').Mod} */
     var object = objects[id];
     if (object == null) {
-        console.log(`Found a mod that doesn't exist: ${id}`);
+        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Found a mod that doesn't exist: $white,bright{${id}}`);
         return null;
     }
 
