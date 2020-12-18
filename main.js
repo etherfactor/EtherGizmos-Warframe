@@ -1,3 +1,5 @@
+const superconsole = require('../../scripts/logging/superconsole');
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -32,19 +34,23 @@ function Initialize(setupFunction)
     });
 
     const routerProperties = {
-        App: app.get('app-name')
+        App: app.get('app-name'),
+        WebsocketHttp: app.get('websocket-http'),
+        WebsocketHttps: app.get('websocket-https')
     };
 
     //Load all the router objects
     //TODO: Make this automatically pull all router objects in the directory
     const indexRouter = require('./routes/index');
     const simulatorRouter = require('./routes/simulator');
+    const arsenalRouter = require('./routes/arsenal');
     const dataRouter = require('./routes/data');
     const apiRouter = require('./routes/api');
     const redirectRouter = require('./routes/redirect');
 
     indexRouter.SetProperties(routerProperties);
     simulatorRouter.SetProperties(routerProperties);
+    arsenalRouter.SetProperties(routerProperties);
     dataRouter.SetProperties(routerProperties);
     apiRouter.SetProperties(routerProperties);
     redirectRouter.SetProperties(routerProperties);
@@ -57,10 +63,12 @@ function Initialize(setupFunction)
     app.use('/styles', express.static(path.join(__dirname, './styles')));
     app.use('/scripts', express.static(path.join(__dirname, './scripts/public')));
     app.use('/images', express.static(path.join(__dirname, '../../images')));
+    app.use('/directives', express.static(path.join(__dirname, './views/partial/directives')));
 
     //Set the sub-URL that each router will handle
     app.use('/', indexRouter.Router);
     app.use('/simulator', simulatorRouter.Router);
+    app.use('/arsenal', arsenalRouter.Router);
     app.use('/data', dataRouter.Router);
     app.use('/api', apiRouter.Router);
     app.use('/r', redirectRouter.Router);

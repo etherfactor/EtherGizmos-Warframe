@@ -283,6 +283,21 @@ if (false) {
     $AngularClasses.AjaxLoader_Config_Index = AjaxLoader_Config_Index;
     module.exports.AjaxLoader_Config_Index = AjaxLoader_Config_Index;
 
+    class AjaxLoader_Config_Arsenal {
+        /**
+         * 
+         * @param {AjaxLoader} AjaxLoader 
+         */
+        constructor(AjaxLoader) {
+            AjaxLoader.Config.Callback = function(data) {
+                $('body').removeClass('loading-data');
+            };
+        }
+    }
+    AjaxLoader_Config_Arsenal.$inject = [ '$AjaxLoaderProvider' ];
+    $AngularClasses.AjaxLoader_Config_Arsenal = AjaxLoader_Config_Arsenal;
+    module.exports.AjaxLoader_Config_Arsenal = AjaxLoader_Config_Arsenal;
+
     class AjaxLoader_Config_Simulator {
         /**
          * 
@@ -352,6 +367,113 @@ if (false) {
     $AngularClasses.$MultiLineFilter = $MultiLineFilter;
     module.exports.$MultiLineFilter = $MultiLineFilter;
 
+    class Arsenal {
+        constructor() {
+            this.config = {};
+        }
+        
+        $get() {
+            return new ArsenalService(this.config);
+        }
+    }
+    $AngularClasses.Arsenal = Arsenal;
+    module.exports.Arsenal = Arsenal;
+
+    class ArsenalService {
+        constructor(config) {
+            /** @type {import('./classes').Weapon[]} */
+            this.Weapons = [];
+        }
+
+        AddWeapons(data) {
+            var keys = Object.keys(data);
+
+            for (var k = 0; k < keys.length; k++)
+            {
+                var json = data[keys[k]];
+                var weapon = new $Classes.Weapon()
+                    .SetName(json.Name)
+                    .SetImage(json.Image)
+                    .SetMastery(json.Mastery)
+                    .SetModTypes(json.ModTypes)
+                    .SetMagazineSize(json.BaseMagazineSize)
+                    .SetMaximumAmmo(json.BaseMaximumAmmo)
+                    .SetReloadDuration(json.BaseReloadDuration)
+                    .SetAdditionalSettingsHtml(json.AdditionalSettingsHtml);
+
+                var fkeys = Object.keys(json.FiringModes);
+                for (var f = 0; f < fkeys.length; f++)
+                {
+                    var fjson = json.FiringModes[fkeys[f]];
+                    /**
+                     * @type {import('./classes').WeaponFiringMode}
+                     */
+                    var firingMode = new $Classes.WeaponFiringMode()
+                        .SetName(fjson.Name)
+                        .SetDamageImpact(fjson.OriginalBaseDamage[$Classes.DamageType.IMPACT])
+                        .SetDamagePuncture(fjson.OriginalBaseDamage[$Classes.DamageType.PUNCTURE])
+                        .SetDamageSlash(fjson.OriginalBaseDamage[$Classes.DamageType.SLASH])
+                        .SetDamageCold(fjson.OriginalBaseDamage[$Classes.DamageType.COLD])
+                        .SetDamageElectric(fjson.OriginalBaseDamage[$Classes.DamageType.ELECTRIC])
+                        .SetDamageHeat(fjson.OriginalBaseDamage[$Classes.DamageType.HEAT])
+                        .SetDamageToxin(fjson.OriginalBaseDamage[$Classes.DamageType.TOXIN])
+                        .SetDamageBlast(fjson.OriginalBaseDamage[$Classes.DamageType.BLAST])
+                        .SetDamageCorrosive(fjson.OriginalBaseDamage[$Classes.DamageType.CORROSIVE])
+                        .SetDamageGas(fjson.OriginalBaseDamage[$Classes.DamageType.GAS])
+                        .SetDamageMagnetic(fjson.OriginalBaseDamage[$Classes.DamageType.MAGNETIC])
+                        .SetDamageRadiation(fjson.OriginalBaseDamage[$Classes.DamageType.RADIATION])
+                        .SetDamageViral(fjson.OriginalBaseDamage[$Classes.DamageType.VIRAL])
+                        .SetPellets(fjson.Pellets)
+                        .SetFireRate(fjson.FireRate)
+                        .SetCriticalChance(fjson.CriticalChance)
+                        .SetCriticalMultiplier(fjson.CriticalMultiplier)
+                        .SetStatusChance(fjson.StatusChance)
+                        .SetAmmoConsumption(fjson.AmmoConsumption)
+                        .SetIsBeam(fjson.IsBeam);
+
+                    var rkeys = Object.keys(json.FiringModes[fkeys[f]].Residuals);
+                    for (var r = 0; r < rkeys.length; r++)
+                    {
+                        var rjson = json.FiringModes[fkeys[f]].Residuals[rkeys[r]];
+                        /**
+                         * @type {import('./classes').WeaponFiringModeResidual}
+                         */
+                        var firingModeResidual = new $Classes.WeaponFiringModeResidual()
+                            .SetDamageImpact(rjson.OriginalBaseDamage[$Classes.DamageType.IMPACT])
+                            .SetDamagePuncture(rjson.OriginalBaseDamage[$Classes.DamageType.PUNCTURE])
+                            .SetDamageSlash(rjson.OriginalBaseDamage[$Classes.DamageType.SLASH])
+                            .SetDamageCold(rjson.OriginalBaseDamage[$Classes.DamageType.COLD])
+                            .SetDamageElectric(rjson.OriginalBaseDamage[$Classes.DamageType.ELECTRIC])
+                            .SetDamageHeat(rjson.OriginalBaseDamage[$Classes.DamageType.HEAT])
+                            .SetDamageToxin(rjson.OriginalBaseDamage[$Classes.DamageType.TOXIN])
+                            .SetDamageBlast(rjson.OriginalBaseDamage[$Classes.DamageType.BLAST])
+                            .SetDamageCorrosive(rjson.OriginalBaseDamage[$Classes.DamageType.CORROSIVE])
+                            .SetDamageGas(rjson.OriginalBaseDamage[$Classes.DamageType.GAS])
+                            .SetDamageMagnetic(rjson.OriginalBaseDamage[$Classes.DamageType.MAGNETIC])
+                            .SetDamageRadiation(rjson.OriginalBaseDamage[$Classes.DamageType.RADIATION])
+                            .SetDamageViral(rjson.OriginalBaseDamage[$Classes.DamageType.VIRAL])
+                            .SetPellets(rjson.Pellets)
+                            .SetDuration(rjson.Duration)
+                            .SetOverrideCriticalChance(rjson.OverrideCriticalChance)
+                            .SetOverrideCriticalMultiplier(rjson.OverrideCriticalMultiplier)
+                            .SetOverrideStatusChance(rjson.OverrideStatusChance);
+
+                        firingMode.AddResidual(firingModeResidual);
+                    }
+
+                    weapon.AddFiringMode(firingMode);
+                }
+
+                weapon.SetFiringMode(0);
+
+                //Weapons = []; //remove
+                this.Weapons.push(weapon);
+            }
+        }
+    }
+    $AngularClasses.ArsenalService = ArsenalService;
+    module.exports.ArsenalService = ArsenalService;
+
     class TabsController {
         constructor($scope, $http, $AjaxLoader, $Simulator) {
             this.$scope = $scope;
@@ -386,6 +508,7 @@ if (false) {
             this.$AjaxLoader = $AjaxLoader;
             this.$Simulator = $Simulator;
             this.$Simulator.$scope = $scope;
+            this.$Simulator.SetupOnHistoryChange();
 
             this.WeaponTableSortType = 'Name';
             this.WeaponTableSortReverse = false;
@@ -475,10 +598,55 @@ if (false) {
             var modal = $('#ModalWeaponSelect');
             modal.modal('show');
         }
+
+        /**
+         * 
+         * @param {import('./classes').Weapon} weapon 
+         */
+        RedirectToSimulator(weapon) {
+            console.log('Redirecting...');
+            window.location.href = `/simulator/${weapon.UrlName}`
+        }
     }
     WeaponsController.$inject = [ '$scope', '$http', '$AjaxLoader', '$Simulator' ];
     $AngularClasses.WeaponsController = WeaponsController;
     module.exports.WeaponsController = WeaponsController;
+
+    class ArsenalWeaponsController {
+        /**
+         * 
+         * @param {*} $scope 
+         * @param {*} $http 
+         * @param {AjaxLoaderService} $AjaxLoader 
+         * @param {SimulatorService} $Arsenal 
+         */
+        constructor($scope, $http, $AjaxLoader, $Arsenal) {
+            this.$scope = $scope;
+            this.$http = $http;
+            this.$AjaxLoader = $AjaxLoader;
+            this.$Arsenal = $Arsenal;
+        }
+
+        $onInit() {
+            const MAIN = this;
+
+            var ajaxIdentifierWeapons = 'weapons';
+            MAIN.$AjaxLoader.StartWaiting(ajaxIdentifierWeapons);
+            MAIN.$http.get('/data/weapons').then(function(response) {
+                var data = response.data;
+                MAIN.$Arsenal.AddWeapons(data);
+
+                MAIN.$AjaxLoader.FinishWaiting(ajaxIdentifierWeapons);
+            });
+        }
+
+        get Weapons() {
+            return this.$Arsenal.Weapons;
+        }
+    }
+    ArsenalWeaponsController.$inject = [ '$scope', '$http', '$AjaxLoader', '$Arsenal' ];
+    $AngularClasses.ArsenalWeaponsController = ArsenalWeaponsController;
+    module.exports.ArsenalWeaponsController = ArsenalWeaponsController;
 
     class ModsController {
         /**
@@ -495,9 +663,6 @@ if (false) {
             this.$Simulator = $Simulator;
 
             this.$Alerts = window.$Alerts;
-
-            this.RivenModEffects = [];
-            this.RivenModEffectPower = [];
 
             this.ModRarityFilter = -1;
             this.ModPolarityFilter = -1;
@@ -543,6 +708,14 @@ if (false) {
             return this.$Simulator.Riven;
         }
 
+        get RivenModEffects() {
+            return this.$Simulator.RivenModEffects;
+        }
+
+        get RivenModEffectPower() {
+            return this.$Simulator.RivenModEffectPower;
+        }
+
         EditRiven() {
             $('#ModalRivenEdit').modal('show');
         }
@@ -559,23 +732,19 @@ if (false) {
         SetModObject(object, position, ignoreHistory) {
             this.$Simulator.SetModObject(object, position, ignoreHistory);
         }
+
+        /**
+         * 
+         * @param {import('./classes').Mod} mod 
+         * @param {number} rank 
+         */
+        SetModRank(mod, rank) {
+            mod.SetRank(rank);
+            this.$Simulator.DoHistoryUpdate(734);
+        }
         
         UpdateRivenModEffects() {
-            this.Riven.Effects = {};
-            this.Riven.EffectDescriptions = {};
-
-            for (var e = 0; e < 4; e++)
-            {
-                var effect = this.RivenModEffects[e];
-                if (effect == undefined)
-                    continue;
-
-                var power = this.RivenModEffectPower[e] || 0;
-
-                this.Riven.AddEffect(effect, power/100, this.$Simulator.ModEffectDescriptions[effect]);
-            }
-
-            this.ActiveWeapon.ForceUpdate();
+            this.$Simulator.UpdateRivenModEffects();
         }
     }
     ModsController.$inject = [ '$scope', '$http', '$AjaxLoader', '$Simulator' ];
@@ -870,11 +1039,11 @@ if (false) {
 
             /** @type {import('./classes').Weapon[]} */
             this.Weapons = [];
-            /** @type {import('./classes').Mods[]} */
+            /** @type {import('./classes').Mod[]} */
             this.Mods = [];
-            /** @type {import('./classes').Mods[]} */
+            /** @type {import('./classes').Mod[]} */
             this.FilteredMods = [];
-            /** @type {import('./classes').Enemies[]} */
+            /** @type {import('./classes').Enemy[]} */
             this.Enemies = [];
             
             this.$_AwaitingEnemies = [];
@@ -883,7 +1052,11 @@ if (false) {
 
             this.ModEffectDescriptions = undefined;
 
+            /** @type {import('./classes').Mod} */
             this.Riven = undefined;
+
+            this.RivenModEffects = [];
+            this.RivenModEffectPower = [];
 
             this.SimulationType = 'Random';
             this.SimulationData = {};
@@ -999,7 +1172,7 @@ if (false) {
             this.SelectedFiringMode = this.ActiveWeapon.FiringMode.UrlName;
 
             if (!ignoreHistory)
-                this.DoHistoryUpdate(407);
+                this.DoHistoryUpdate(1156);
         }
 
         SetFiringModeObject(object, ignoreHistory = false) {
@@ -1032,7 +1205,7 @@ if (false) {
             {
                 if (object == null || object.IsCompatible(this.Weapons[w]))
                 {
-                    this.Weapons[w].SetMod(position, object);
+                    this.Weapons[w].SetMod(position, object, true);
                 }
             }
 
@@ -1046,6 +1219,12 @@ if (false) {
                 this.DoHistoryUpdate(424);
         }
 
+        /**
+         * 
+         * @param {string} string 
+         * @param {number} position 
+         * @param {boolean} ignoreHistory 
+         */
         SetModString(string, position = this.ActiveModSelection, ignoreHistory = false) {
             var actualString = undefined;
             var applyEffects = undefined;
@@ -1058,25 +1237,63 @@ if (false) {
             for (var m = 0; m < this.FilteredMods.length; m++)
             {
                 var mod = this.FilteredMods[m];
-                if (mod.UrlName == actualString)
+                if (mod.UrlNameClean == actualString)
                 {
                     if (applyEffects != undefined) {
-                        applyEffects = applyEffects.split(';');
-                        for (var e = 0; e < applyEffects.length; e++)
+                        applyEffects = applyEffects.split('&');
+
+                        for (var a = 0; a < applyEffects.length; a++)
                         {
-                            var effect = applyEffects[e];
-                            var effectType = effect.split(':')[0];
-                            var effectPower = effect.split(':')[1];
-                            
-                            if (effectType != undefined && effectPower != undefined) {
-                                mod.AddEffect(effectType, effectPower, this.ModEffectDescriptions[effectType]);
+                            var type = applyEffects[a].substring(0, applyEffects[a].indexOf(':'));
+                            var effect = applyEffects[a].substring(applyEffects[a].indexOf(':') + 1, applyEffects[a].length);
+
+                            console.log(type, effect);
+
+                            switch (type) {
+                                case ('r'):
+                                    var rankNumber = parseInt(effect);
+                                    if (!isNaN(rankNumber)) {
+                                        mod.SetRank(rankNumber);
+                                    }
+                                    break;
+
+                                case ('e'):
+                                    if (actualString != 'riven-mod')
+                                        break;
+
+                                    this.RivenModEffects.length = 0;
+                                    this.RivenModEffectPower.length = 0;
+
+                                    var modEffects = effect.split(';');
+                                    for (var e = 0; e < modEffects.length; e++)
+                                    {
+                                        var modEffect = modEffects[e];
+                                        var modEffectType = modEffect.split(':')[0];
+                                        var modEffectPower = parseFloat(modEffect.split(':')[1]);
+                                        
+                                        if (isNaN(modEffectType) || isNaN(modEffectPower))
+                                            continue;
+                                        
+                                        if (modEffectType != undefined && modEffectPower != undefined) {
+                                            mod.AddEffect(modEffectType, modEffectPower, this.ModEffectDescriptions[modEffectType]);
+                                            this.RivenModEffects.push(modEffectType);
+                                            this.RivenModEffectPower.push(modEffectPower * 100);
+                                        }
+                                    }
+                                    break;
                             }
                         }
+                    } else {
+                        mod.SetRank(mod.Ranks);
                     }
 
                     this.SetModObject(mod, position, ignoreHistory);
                     break;
                 }
+            }
+
+            if (string == 'empty' || string == null) {
+                this.SetModObject(null, position, ignoreHistory);
             }
         }
 
@@ -1095,7 +1312,7 @@ if (false) {
             }
 
             this.ActiveWeapon = object;
-            this.SetFiringModeIndex(0, ignoreHistory);
+            this.SetFiringModeIndex(0, true);
 
             this.FilteredMods = [];
             for (var m = 0; m < this.Mods.length; m++)
@@ -1109,7 +1326,7 @@ if (false) {
             $('#ModalWeaponSelect').modal('hide');
 
             if (!ignoreHistory)
-                this.DoHistoryUpdate(363);
+                this.DoHistoryUpdate(1306);
         }
 
         SetWeaponString(string, ignoreHistory = false) {
@@ -1141,11 +1358,11 @@ if (false) {
                         var websocketPort;
                         switch (websocketProtocol) {
                             case ('ws:'):
-                                websocketPort = 1080;
+                                websocketPort = $Websocket.Http;
                                 break;
         
                             case ('wss:'):
-                                websocketPort = 1443;
+                                websocketPort = $Websocket.Https;
                                 break;
         
                             default:
@@ -1220,14 +1437,16 @@ if (false) {
                     .SetImage(json.Image)
                     .SetRarity(json.Rarity)
                     .SetType(json.ModType)
-                    .SetDescription(json.EffectDescriptions)
                     .SetDrain(json.MinDrain, json.Ranks);
 
-                var fkeys = Object.keys(json.Effects);
+                var fkeys = Object.keys(json.$_Effects);
                 for (var f = 0; f < fkeys.length; f++)
                 {
-                    mod.AddEffect(fkeys[f], json.Effects[fkeys[f]]);
+                    mod.AddEffect(fkeys[f], json.$_Effects[fkeys[f]]);
                 }
+
+                mod.$_EffectDescriptions = json.$_EffectDescriptions;
+                mod.$_EffectRankOverrides = json.$_EffectRankOverrides;
 
                 this.Mods.push(mod);
 
@@ -1341,11 +1560,13 @@ if (false) {
         }
         
         DoHistoryUpdate(line) {
-            var url = this.DoUrlUpdate(line);
+            var url = this.DoUrlUpdate(line, false);
             history.pushState(this.GetState(), this.ActiveWeapon.Name, url);
+
+            console.log('Set state', line, history.state);
         }
 
-        DoUrlUpdate(line) {
+        DoUrlUpdate(line, changeUrl = true) {
             var weaponUrlPath = this.ActiveWeapon.UrlPath.split('/')[0];
             var modUrlPath = this.ActiveWeapon.UrlPath.split('/')[1];
             var enemy1UrlPath = this.ActiveEnemy[0].UrlPath;
@@ -1374,7 +1595,13 @@ if (false) {
             }
 
             var url = this.UrlPrefix + '/' + weaponUrlPath + '/' + modUrlPath + '/' + enemy1UrlPath + '/' + enemy2UrlPath + '/' + enemy3UrlPath + '/' + enemy4UrlPath;
-            history.replaceState(this.GetState(), this.ActiveWeapon.Name, url);
+
+            if (changeUrl) {
+                history.replaceState(this.GetState(), this.ActiveWeapon.Name, url);
+                console.log('Set url', line, history.state);
+            }
+
+
             return url;
         }
 
@@ -1390,7 +1617,7 @@ if (false) {
                 this.SetEnemyString('ancient-healer', 3, true);
                 this.ActiveEnemy[3].SetLevel(100);
 
-                this.DoHistoryUpdate(447);
+                this.DoUrlUpdate(447);
             } else {
                 this.LoadState(this.InitialState);
             }
@@ -1514,6 +1741,33 @@ if (false) {
             }
             
             return initialState;
+        }
+
+        SetupOnHistoryChange() {
+            var MAIN = this;
+            window.addEventListener('popstate', function() {
+                MAIN.$scope.$apply(() => {
+                    MAIN.LoadState(history.state);
+                });
+            })
+        }
+
+        UpdateRivenModEffects() {
+            this.Riven.$_Effects = {};
+            this.Riven.$_EffectDescriptions = {};
+
+            for (var e = 0; e < 4; e++)
+            {
+                var effect = this.RivenModEffects[e];
+                if (effect == undefined)
+                    continue;
+
+                var power = this.RivenModEffectPower[e] || 0;
+
+                this.Riven.AddEffect(effect, power/100, this.ModEffectDescriptions[effect]);
+            }
+
+            this.ActiveWeapon.ForceUpdate();
         }
 
         /**
@@ -1775,6 +2029,22 @@ if (false) {
     }
     $AngularClasses.SimulationController = SimulationController;
     module.exports.SimulationController = SimulationController;
+
+    class ModCardDirective {
+        constructor() {
+            this.restrict = 'E';
+            this.scope = {
+                mod: '=mod',
+                onClick: '&onClick',
+                onModRankClick: '&onModRankClick',
+                displayText: '<displayText',
+                showRanks: '<showRanks'
+            };
+            this.templateUrl = '/directives/mod-card.html';
+        }
+    }
+    $AngularClasses.ModCardDirective = ModCardDirective;
+    module.exports.ModCardDirective = ModCardDirective;
 
     function $DirectiveSimBindUnsafeHtml($compile) {
         return function ($scope, element, attributes) {

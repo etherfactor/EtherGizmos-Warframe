@@ -807,8 +807,13 @@ if (typeof window == 'undefined') {
             return this;
         }
 
-
-        SetMod(position, mod) {
+        /**
+         * 
+         * @param {number} position 
+         * @param {Mod} mod 
+         * @param {boolean} silentSlot 
+         */
+        SetMod(position, mod, silentSlot) {
             if (position < 0 || position >= 8) return;
 
             if (mod != null) {
@@ -817,11 +822,21 @@ if (typeof window == 'undefined') {
                     var testMod = this.Mods[m];
                     if (mod == testMod) {
                         this.Mods[m] = this.Mods[position];
+                        this.Mods[position] = null;
                     }
                 }
             }
 
+            if (this.Mods[position] != null && !silentSlot) {
+                this.Mods[position].SetSlottedWeapon(null);
+            }
+
             this.Mods[position] = mod;
+
+            if (mod != null && !silentSlot) {
+                mod.SetSlottedWeapon(this);
+            }
+
             $_FlagChange(this);
             return this;
         }
@@ -1548,6 +1563,32 @@ if (typeof window == 'undefined') {
                 //console.log(result);
 
                 return result;
+            });
+        }
+
+        get PrimaryDamageTypeDisplay() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'PrimaryDamageTypeDisplay', function() {
+                var damages = MAIN.Damage;
+                var keys = Object.keys(damages);
+
+                var topDamage = -1;
+                var topDamageAmount = -1;
+
+                for (var d = 0; d < keys.length; d++)
+                {
+                    var key = keys[d];
+                    var damage = damages[key];
+
+                    if (damage > topDamageAmount) {
+                        topDamage = key;
+                        topDamageAmount = damage;
+                    }
+                }
+
+                var topDamageProportion = topDamageAmount / MAIN.TotalDamage;
+
+                return `${DamageTypeName[topDamage]} / ${(100*topDamageProportion).toFixed(0)}%`
             });
         }
 
@@ -2345,8 +2386,12 @@ if (typeof window == 'undefined') {
 
     class Mod {
         constructor() {
-            this.Effects = {};
-            this.EffectDescriptions = {};
+            this.Rank = undefined;
+
+            this.$_Effects = {};
+            this.$_EffectDescriptions = {};
+
+            this.$_EffectRankOverrides = {};
 
             $_FlagChange(this);
         }
@@ -2358,14 +2403,20 @@ if (typeof window == 'undefined') {
                 Rarity: this.Rarity,
                 ModType: this.ModType,
                 MinDrain: this.MinDrain,
+                Rank: this.Rank,
                 Ranks: this.Ranks,
-                EffectDescriptions: this.EffectDescriptions,
-                Effects: this.Effects
+                $_EffectDescriptions: this.$_EffectDescriptions,
+                $_Effects: this.$_Effects,
+                $_EffectRankOverrides: this.$_EffectRankOverrides
             }
 
             return data;
         }
 
+        /**
+         * 
+         * @param {Mod} object 
+         */
         static FromObject(object) {
             var mod = new Mod()
                 .SetName(object.Name)
@@ -2373,14 +2424,17 @@ if (typeof window == 'undefined') {
                 .SetRarity(object.Rarity)
                 .SetType(object.ModType)
                 .SetDrain(object.MinDrain, object.Ranks)
-                .SetDescription(object.EffectDescriptions);
+                .SetRank(object.Rank);
 
-            var effKeys = Object.keys(object.Effects);
+            var effKeys = Object.keys(object.$_Effects);
             for (var e = 0; e < effKeys.length; e++)
             {
                 var effType = effKeys[e];
-                mod.AddEffect(effType, object.Effects[effType]);
+                mod.AddEffect(effType, object.$_Effects[effType]);
             }
+
+            mod.$_EffectDescriptions = object.$_EffectDescriptions;
+            mod.$_EffectRankOverrides = object.$_EffectRankOverrides;
 
             return mod;
         }
@@ -2409,27 +2463,48 @@ if (typeof window == 'undefined') {
         SetDrain(minDrain, ranks) {
             this.MinDrain = minDrain;
             this.Ranks = ranks;
-            return this;
-        }
-
-        SetDescription(descriptionData) {
-            this.EffectDescriptions = descriptionData;
-            $_FlagChange(this);
+            
+            this.SetRank(ranks);
             return this;
         }
 
         AddEffect(modEffect, power = 0, description = undefined) {
-            this.Effects[modEffect] = parseFloat(power);
+            this.$_Effects[modEffect] = parseFloat(power);
             if (description != undefined) {
-                var updatedDescription = description;
+                this.$_EffectDescriptions[modEffect] = description;
+
+                /*var updatedDescription = description;
                 updatedDescription = updatedDescription
                     .replace('{{x%}}', (power * 100).toLocaleString())
                     .replace('{{x+}}', power.toLocaleString())
                     .replace('+-', '-');
 
-                this.EffectDescriptions[modEffect] = updatedDescription;
+                this.EffectDescriptions[modEffect] = updatedDescription;*/
             }
             $_FlagChange(this);
+            return this;
+        }
+
+        /**
+         * Overrides a specific mod effect at a specified rank
+         * @param {number} rank 
+         * @param {ModEffect} modEffect 
+         * @param {number} power 
+         */
+        AddEffectRankOverride(rank, modEffect, power = 0) {
+            this.$_EffectRankOverrides[rank] = this.$_EffectRankOverrides[rank] || {};
+            this.$_EffectRankOverrides[rank][modEffect] = power;
+            return this;
+        }
+
+        SetRank(rank) {
+            this.Rank = Math.max(Math.min(rank, this.Ranks), 0);
+
+            $_FlagChange(this);
+            if (this.$_SlottedWeapon != null) {
+                $_FlagChange(this.$_SlottedWeapon);
+            }
+
             return this;
         }
 
@@ -2442,6 +2517,71 @@ if (typeof window == 'undefined') {
                 return true;
 
             return false;
+        }
+
+        /**
+         * 
+         * @param {Weapon} weapon 
+         */
+        SetSlottedWeapon(weapon) {
+            this.$_SlottedWeapon = weapon;
+            return this;
+        }
+
+        get Effects() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'Effects', function() {
+                var modEffects = {};
+
+                function parseEffects(effects, scaleToRank) {
+                    if (effects == undefined)
+                        return;
+
+                    var keys = Object.keys(effects);
+                    for (var e = 0; e < keys.length; e++)
+                    {
+                        var effect = keys[e];
+                        var power = effects[effect];
+
+                        if (scaleToRank) {
+                            modEffects[effect] = ((MAIN.Rank + 1) / (MAIN.Ranks + 1)) * power;
+                        } else {
+                            modEffects[effect] = power;
+                        }
+                    }
+                }
+
+                parseEffects(MAIN.$_Effects, true);
+                parseEffects(MAIN.$_EffectRankOverrides[MAIN.Rank], false);
+
+                return modEffects;
+            });
+        }
+
+        get EffectDescriptions() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'EffectDescriptions', function() {
+                var effectDescriptions = {};
+
+                var keys = Object.keys(MAIN.$_EffectDescriptions);
+                for (var d = 0; d < keys.length; d++)
+                {
+                    var effect = keys[d];
+                    var description = MAIN.$_EffectDescriptions[effect];
+
+                    var power = MAIN.Effects[effect];
+
+                    var updatedDescription = description;
+                    updatedDescription = updatedDescription
+                        .replace('{{x%}}', (power * 100).toLocaleString())
+                        .replace('{{x+}}', power.toLocaleString())
+                        .replace('+-', '-');
+
+                    effectDescriptions[effect] = updatedDescription;
+                }
+
+                return effectDescriptions;
+            });
         }
 
         get Description() {
@@ -2481,21 +2621,50 @@ if (typeof window == 'undefined') {
             });
         }
 
+        get UrlNameClean() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'UrlNameClean', function() {
+                /** @type {string} */
+                var urlName = MAIN.Name.toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
+
+                return urlName;
+            });
+        }
+
         get UrlName() {
             var MAIN = this;
             return $_CalculateOrLoadProperty(this, 'UrlName', function() {
-                var urlName = MAIN.Name.toLowerCase().replace(/ /g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
+                /** @type {string} */
+                var urlName = MAIN.UrlNameClean;
+
+                if (MAIN.Rank < MAIN.Ranks) {
+                    var urlNameAdd = '';
+                    urlNameAdd = `${MAIN.Rank}`;
+
+                    if (urlNameAdd != '') {
+                        if (!urlName.includes('@')) {
+                            urlName += `@r:${urlNameAdd}`;
+                        } else {
+                            urlName += `&r:${urlNameAdd}`;
+                        }
+                    }
+                }
+
                 if (MAIN.Name.toLowerCase() == 'riven mod') {
                     var urlNameAdd = '';
-                    var keys = Object.keys(MAIN.Effects);
+                    var keys = Object.keys(MAIN.$_Effects);
                     for (var e = 0; e < keys.length; e++)
                     {
                         var effect = keys[e];
-                        urlNameAdd += `${urlNameAdd != '' ? ';' : ''}${effect}:${MAIN.Effects[effect].toFixed(5)}`;
+                        urlNameAdd += `${urlNameAdd != '' ? ';' : ''}${effect}:${MAIN.$_Effects[effect].toFixed(5)}`;
                     }
 
                     if (urlNameAdd != '') {
-                        urlName += `@${urlNameAdd}`;
+                        if (!urlName.includes('@')) {
+                            urlName += `@e:${urlNameAdd}`;
+                        } else {
+                            urlName += `&e:${urlNameAdd}`;
+                        }
                     }
                 }
 

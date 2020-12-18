@@ -181,7 +181,7 @@ function OnConnect(ws) {
      * @param {string} message 
      */
     function OnMessage(message) {
-        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Websocket received: $white,bright{${message}}`);
+        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Websocket received: $white,bright:${message}`);
 
         //Parse the object from the message
         var encodedMessage = JSON.parse(message);
