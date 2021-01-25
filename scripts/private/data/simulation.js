@@ -457,7 +457,7 @@ async function GetModById(id) {
                     break;
 
                 case ('e'):
-                    if (actualString != 'riven-mod')
+                    if (id != 'riven-mod')
                         break;
 
                     var modEffects = effect.split(';');
@@ -471,7 +471,7 @@ async function GetModById(id) {
                             continue;
                         
                         if (modEffectType != undefined && modEffectPower != undefined) {
-                            object.AddEffect(modEffectType, modEffectPower, this.ModEffectDescriptions[modEffectType]);
+                            object.AddEffect(modEffectType, modEffectPower, '');
                         }
                     }
                     break;
