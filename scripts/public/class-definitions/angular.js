@@ -1506,7 +1506,8 @@ if (false) {
                         .SetCriticalMultiplier(fjson.CriticalMultiplier)
                         .SetStatusChance(fjson.StatusChance)
                         .SetAmmoConsumption(fjson.AmmoConsumption)
-                        .SetIsBeam(fjson.IsBeam);
+                        .SetIsBeam(fjson.IsBeam)
+                        .SetChargeDelay(fjson.ChargeDelay);
 
                     var rkeys = Object.keys(json.FiringModes[fkeys[f]].Residuals);
                     for (var r = 0; r < rkeys.length; r++)

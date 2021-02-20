@@ -1114,6 +1114,21 @@ if (typeof window == 'undefined') {
                 return MAIN.FiringMode.FireRate;
             });
         }
+        
+        // FIRE_RATE: 60,
+        get ChargeDelay() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'ChargeDelay', function() {
+                return MAIN.BaseChargeDelay / (1 + MAIN.$_GetModdedProperty(ModEffect.FIRE_RATE));
+            });
+        }
+
+        get BaseChargeDelay() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'BaseChargeDelay', function() {
+                return MAIN.FiringMode.ChargeDelay;
+            });
+        }
 
         // RELOAD_SPEED: 61,
         get ReloadDuration() {
@@ -1707,6 +1722,7 @@ if (typeof window == 'undefined') {
                 StatusChance: this.StatusChance,
                 AmmoConsumption: this.AmmoConsumption,
                 IsBeam: this.IsBeam,
+                ChargeDelay: this.ChargeDelay,
                 Residuals: []
             }
 
@@ -1718,6 +1734,10 @@ if (typeof window == 'undefined') {
             return data;
         }
 
+        /**
+         * 
+         * @param {WeaponFiringMode} object 
+         */
         static FromObject(object) {
             var firingMode = new this()
                 .SetName(object.Name)
@@ -1740,7 +1760,8 @@ if (typeof window == 'undefined') {
                 .SetCriticalMultiplier(object.CriticalMultiplier)
                 .SetStatusChance(object.StatusChance)
                 .SetAmmoConsumption(object.AmmoConsumption)
-                .SetIsBeam(object.IsBeam);
+                .SetIsBeam(object.IsBeam)
+                .SetChargeDelay(object.ChargeDelay);
 
             for (var r = 0; r < object.Residuals.length; r++)
             {
@@ -1919,6 +1940,11 @@ if (typeof window == 'undefined') {
          */
         AddResidual(residual) {
             this.Residuals.push(residual);
+            return this;
+        }
+
+        SetChargeDelay(delay) {
+            this.ChargeDelay = delay;
             return this;
         }
 

@@ -113,7 +113,11 @@ function UpdateWeapons() {
                                 weapons[rf.id].FiringModes[rf.line - 1] = firingMode;
                             }
 
-                            weapons[rf.id].FiringModes[rf.line - 1]
+                            /**
+                             * @type {import('../../public/class-definitions/classes').WeaponFiringMode}
+                             */
+                            var temp = weapons[rf.id].FiringModes[rf.line - 1];
+                            temp
                                 .SetName(rf.name)
                                 .SetDamageImpact(rf.impact)
                                 .SetDamagePuncture(rf.puncture)
@@ -134,7 +138,8 @@ function UpdateWeapons() {
                                 .SetCriticalMultiplier(rf.critical_multiplier)
                                 .SetStatusChance(rf.status_chance)
                                 .SetAmmoConsumption(rf.ammo_consumption)
-                                .SetIsBeam(rf.is_beam.readUIntBE(0, 1) ? true : false);
+                                .SetIsBeam(rf.is_beam.readUIntBE(0, 1) ? true : false)
+                                .SetChargeDelay(rf.charge_delay);
                         }
 
                         callback(null, 1);

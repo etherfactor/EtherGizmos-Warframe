@@ -400,7 +400,7 @@ if (typeof window == 'undefined') {
             this.CurrentShotDelay = this.ShotDelay;
 
             /** @type {number} - Delay in seconds before shot is fired */
-            this.ChargeDelay = 0; //this needs to be set to the weapon's charge delay
+            this.ChargeDelay = weapon.ChargeDelay; //this needs to be set to the weapon's charge delay
 
             /** @type {number} - Remaining delay in seconds before the next shot is fired */
             this.CurrentChargeDelay = this.ChargeDelay; //this needs to be set to the weapon's charge delay

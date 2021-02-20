@@ -70,13 +70,22 @@
                             {{weapons.ActiveWeapon.ReloadDuration | number : 1}}
                         </span>
                     </div>
-                    <div class="wep-stat clearfix">
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.FireRate > 0">
                         <span class="wep-stat-name">Fire Rate</span>
                         <span class="wep-stat-val">
                             <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseFireRate != weapons.ActiveWeapon.FireRate">
                                 {{weapons.ActiveWeapon.BaseFireRate | number : 1}} ▸ 
                             </span>
                             {{weapons.ActiveWeapon.FireRate | number : 1}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.ChargeDelay > 0 || weapons.ActiveWeapon.FireRate <= 0">
+                        <span class="wep-stat-name">Charge Delay</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseChargeDelay != weapons.ActiveWeapon.ChargeDelay">
+                                {{weapons.ActiveWeapon.BaseChargeDelay | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.ChargeDelay | number : 1}}
                         </span>
                     </div>
 
