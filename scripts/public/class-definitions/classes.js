@@ -236,6 +236,7 @@ if (typeof window == 'undefined') {
 
         HUNTER_MUNITIONS_EFFECT: 200,
         PROPORTIONAL_HEALTH_EXPLOSION: 201,
+        INTERNAL_BLEEDING_EFFECT: 202,
 
         VIGILANTE_SET_EFFECT: 300,
 
@@ -1368,6 +1369,21 @@ if (typeof window == 'undefined') {
         get BaseHunterMunitionsEffect() {
             var MAIN = this;
             return $_CalculateOrLoadProperty(this, 'BaseHunterMunitionsEffect', function() {
+                return 0;
+            });
+        }
+
+        // INTERNAL_BLEEDING_EFFECT: 202,
+        get InternalBleedingEffect() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'InternalBleedingEffect', function() {
+                return MAIN.BaseInternalBleedingEffect + MAIN.$_GetModdedProperty(ModEffect.INTERNAL_BLEEDING_EFFECT);
+            });
+        }
+
+        get BaseInternalBleedingEffect() {
+            var MAIN = this;
+            return $_CalculateOrLoadProperty(this, 'BaseInternalBleedingEffect', function() {
                 return 0;
             });
         }

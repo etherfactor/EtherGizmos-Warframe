@@ -686,6 +686,12 @@ if (typeof window == 'undefined') {
                 var hunterChance = vigilanteChance
                     .Chance(hunterChanceChance, 'HunterMunitions');
 
+                //As well as Internal Bleeding mod bonuses
+                var internalBleedingChanceChance = this.Weapon.$_GetModdedProperty($Classes.ModEffect.INTERNAL_BLEEDING_EFFECT);
+                if (this.Weapon.$_GetModdedProperty($Classes.ModEffect.FIRE_RATE) < 2.5) {
+                    internalBleedingChanceChance *= 2;
+                }
+
                 //Do procs for this pellet
                 var procs = $_DoProcs(this.Weapon.Damage, statusChance, rngHandler, remainChance, '');
 
@@ -705,6 +711,18 @@ if (typeof window == 'undefined') {
                 //If the Vigilante check succeeded, up the critical level once more
                 if (criticalLevel > 0 && vigilanteChance.Result.VigilanteSetEffect) {
                     criticalLevel++;
+                }
+
+                //Loop through the procs and roll Internal Bleeding for every impact proc
+                for (var p = 0; p < procs.length; p++) {
+                    if (procs[p] == $Classes.DamageType.IMPACT) {
+                        var internalBleedingChance = vigilanteChance
+                            .Chance(internalBleedingChanceChance, 'InternalBleeding');
+
+                        if (internalBleedingChance.Result.InternalBleeding) {
+                            procs.push($Classes.DamageType.SLASH);
+                        }
+                    }
                 }
 
                 //Store the shot result
