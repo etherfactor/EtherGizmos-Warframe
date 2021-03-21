@@ -2621,8 +2621,11 @@ if (typeof window == 'undefined') {
                     var key = keys[k];
                     descriptions.push(effectDescriptions[key]);
                 }
-    
-                return descriptions.join('\n');
+
+                var joinedDescription = descriptions.join('\n');
+                MAIN.StaticDescription = joinedDescription;
+
+                return joinedDescription;
             });
         }
 
