@@ -5,6 +5,8 @@ var allData = require('../scripts/private/data/_all');
 var indexData = require('../scripts/private/data/index');
 var simulationData = require('../scripts/private/data/simulation');
 
+var Properties = undefined;
+
 /* GET home page. */
 router.get('/alerts', async function(req, res, next) {
     var alerts = await allData.GetAlerts();
@@ -36,4 +38,10 @@ router.get('/enemies', async function(req, res, next) {
     res.json(enemies);
 });
 
-module.exports = router;
+module.exports.Router = router;
+
+
+function SetProperties(properties) {
+    Properties = properties;
+}
+module.exports.SetProperties = SetProperties;

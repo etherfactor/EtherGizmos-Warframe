@@ -1,3 +1,5 @@
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 var async = require('async');
 
 var conn = require('../sql/connection');
@@ -68,7 +70,7 @@ function UpdateAlerts() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -109,7 +111,7 @@ function UpdateAlerts() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -160,7 +162,7 @@ function UpdateAlerts() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -214,7 +216,7 @@ function UpdateAlerts() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -262,7 +264,7 @@ function UpdateAlerts() {
             }
 
             Alerts = alertCollection.ToObject();
-            console.log(`Updated alerts as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated alerts as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });

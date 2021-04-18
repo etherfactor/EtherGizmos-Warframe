@@ -1,0 +1,30 @@
+<div id="body-content" class= "div-hide-loading transition-opacity">
+    <div class="container">
+        <%- include('../../partial/generic/survey', { App: App }) %>
+
+        <div ng-controller="Weapons as weapons">
+            <table class="scroll margin-100-t" style="width: 100%; height: calc(100vh - 50px - 35px - 20px);">
+                <tr>
+                    <th style="z-index: 1;"></th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Mastery</th>
+                    <th>Primary Damage</th>
+                    <th>Best Simulation Score</th>
+                </tr>
+                <tr ng-repeat="weapon in weapons.Weapons | orderBy:'Name'" ng-click="weapons.RedirectToSimulator(weapon);">
+                    <td>
+                        <div style="height: 60px; width: 100px; position: relative;">
+                            <img ng-src="/images/weapons/{{weapon.Image}}" alt="{{weapon.Name}}" style="z-index: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; max-height: 60px; max-width: 100px; display: block; margin: auto;">
+                        </div>
+                    </td>
+                    <td style="font-size: 20px;">{{weapon.Name}}</td>
+                    <td>{{weapon.WeaponTypeName}}</td>
+                    <td style="text-align: center;">{{weapon.Mastery}}</td>
+                    <td>{{weapon.PrimaryDamageTypeDisplay}}</td>
+                    <td style="text-align: center;"><span style="font-size: 30px;">TBD</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

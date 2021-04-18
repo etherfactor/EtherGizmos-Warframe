@@ -1,3 +1,5 @@
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 var $Classes = require('../../public/class-definitions/classes');
 var $ClassesPriv = require('../class-definitions/classes');
 
@@ -156,7 +158,7 @@ async function QueueSimulation(messageHandler, weapon, enemy1, enemy2, enemy3, e
                                 if ((err.message.toLowerCase().includes('deadlock') || err.message.toLowerCase().includes('duplicate entry')) && stack <= 5) {
                                     $_doInsertSimulationModGroup(stack + 1);
                                 } else {
-                                    console.log('$_doInsertSimulationModGroup error stack:', stack, '-', err);
+                                    superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, '$red:$_doInsertSimulationModGroup error stack:', stack, '$red:-', err);
                                 }
                                 return;
                             }
@@ -189,7 +191,7 @@ async function QueueSimulation(messageHandler, weapon, enemy1, enemy2, enemy3, e
                                             if ((err.message.toLowerCase().includes('deadlock') || err.message.toLowerCase().includes('duplicate entry')) && stack <= 5) {
                                                 $_doInsertSimulationRun(stack + 1);
                                             } else {
-                                                console.log('$_doInsertSimulationRun error stack:', stack, '-', err);
+                                                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, '$red:$_doInsertSimulationRun error stack:', stack, '$red:-', err);
                                             }
                                             return;
                                         }
@@ -223,7 +225,7 @@ async function QueueSimulation(messageHandler, weapon, enemy1, enemy2, enemy3, e
                                                             if ((err.message.toLowerCase().includes('deadlock') || err.message.toLowerCase().includes('duplicate entry')) && stack <= 5) {
                                                                 $_doInsertSimulationRunProc(stack + 1);
                                                             } else {
-                                                                console.log('$_doInsertSimulationRunProc error stack:', stack, '-', err);
+                                                                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, '$red:$_doInsertSimulationRunProc error stack:', stack, '$red:-', err);
                                                             }
                                                             return;
                                                         }
@@ -257,14 +259,14 @@ async function QueueSimulation(messageHandler, weapon, enemy1, enemy2, enemy3, e
                                                             if ((err.message.toLowerCase().includes('deadlock') || err.message.toLowerCase().includes('duplicate entry')) && stack <= 5) {
                                                                 $_doInsertSimulationGroup(stack + 1);
                                                             } else {
-                                                                console.log('$_doInsertSimulationGroup error stack:', stack, '-', err);
+                                                                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, '$red:$_doInsertSimulationGroup error stack:', stack, '$red:-', err);
                                                             }
                                                             return;
                                                         }
                 
                                                         var simulationGroupId = results[0][0].result;
                 
-                                                        console.log('Data written for simulation group:', simulationGroupId);
+                                                        superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Data written for simulation group: $white,bright{${simulationGroupId}}`);
                                                     }
                                                 );
                                             }

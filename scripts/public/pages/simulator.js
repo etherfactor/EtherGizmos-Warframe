@@ -20,6 +20,7 @@ if (false) {
         .config($AngularClasses.AjaxLoader_Config_Simulator)
         .provider('$Simulator', $AngularClasses.Simulator)
         .directive('simBindUnsafeHtml', $AngularClasses.$DirectiveSimBindUnsafeHtml)
+        .directive('modCard', $AngularClasses.ModCardDirective)
         .filter('multiLine', $AngularClasses.$MultiLineFilter)
         ;
 })(window);

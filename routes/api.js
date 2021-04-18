@@ -1,7 +1,11 @@
+const superconsole = require('../../../scripts/logging/superconsole');
+
 var express = require('express');
 var router = express.Router();
 
 const Sql = require('../scripts/private/sql/connection');
+
+var Properties = undefined;
 
 //Called upon receiving a survey
 /* POST survey */
@@ -18,7 +22,7 @@ router.post('/survey', function(req, res, next) {
         function(err, results) {
             if (err)
             {
-                console.log(21, err);
+                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                 return;
             }
 
@@ -62,7 +66,7 @@ router.post('/survey', function(req, res, next) {
                         function(err, results) {
                             if (err)
                             {
-                                console.log(53, err);
+                                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                                 return;
                             }
 
@@ -96,7 +100,7 @@ router.post('/survey', function(req, res, next) {
                         function(err, results) {
                             if (err)
                             {
-                                console.log(76, err);
+                                superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                                 return;
                             }
                         }
@@ -110,4 +114,10 @@ router.post('/survey', function(req, res, next) {
     res.send('Survey received');
 });
 
-module.exports = router;
+module.exports.Router = router;
+
+
+function SetProperties(properties) {
+    Properties = properties;
+}
+module.exports.SetProperties = SetProperties;
