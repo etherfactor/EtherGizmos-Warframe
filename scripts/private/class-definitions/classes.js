@@ -714,8 +714,8 @@ if (typeof window == 'undefined') {
                 }
 
                 //Loop through the procs and roll Internal Bleeding for every impact proc
-                for (var p = 0; p < procs.length; p++) {
-                    if (procs[p] == $Classes.DamageType.IMPACT) {
+                for (var pe = 0; pe < procs.length; pe++) {
+                    if (procs[pe] == $Classes.DamageType.IMPACT) {
                         var internalBleedingChance = vigilanteChance
                             .Chance(internalBleedingChanceChance, 'InternalBleeding');
 
