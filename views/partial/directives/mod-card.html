@@ -1,0 +1,40 @@
+<div class="mod-wrapper" ng-click="onClick(mod);">
+    <img class="mod-border" ng-src="{{mod.ModBorder || '/images/mods/_bg_none.png'}}">
+    <div class="mod-center">
+        <div ng-show="mod == undefined && displayText != undefined">
+            <svg class="mod-callout-svg" viewBox="0 0 100 16">
+                <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">{{displayText}}</text>
+            </svg>
+        </div>
+        <div ng-show="mod != undefined">
+            <img class="mod-image" src="/images/mods/aero_periphery.png">
+            <div class="mod-text">
+                <div class="mod-text-transition"></div>
+                <span class="mod-title">{{mod.Name}}</span>
+                <br>
+                <span class="mod-description">{{mod.Description}}</span>
+            </div>
+            <svg class="mod-type-svg" viewBox="0 0 100 12">
+                <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">{{mod.ModTypeDisplay}}</text>
+            </svg>
+            <div class="mod-drain">
+                <svg class="mod-drain-svg" viewBox="0 0 30 12">
+                    <text x="100%" y="65%" dominant-baseline="middle" text-anchor="end">{{mod.MaxDrain}}</text>
+                </svg>
+            </div>
+            <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
+            <div class="mod-rank-base">
+                <div class="mod-rank-bar" ng-show="mod.Rank == mod.Ranks"></div>
+                <div ng-repeat="y in [].constructor(mod.Ranks) track by $index">
+                    <img class="mod-rank-star" ng-src="{{mod.Rank > $index ? '/images/mods/_bg_star_on.png' : '/images/mods/_bg_star_off.png'}}" ng-style="{ left: (7*(-((mod.Ranks - 1) / 2) + $index) + 50) + '%' }">
+                </div>
+            </div>
+            <div class="mod-button-panel" ng-show="showRanks">
+                <div class="mod-button b1 no-select" ng-click="$event.stopPropagation(); onModRankClick({ mod: mod, rank: mod.Ranks });">▲</div>
+                <div class="mod-button b2 no-select" ng-click="$event.stopPropagation(); onModRankClick({ mod: mod, rank: mod.Rank + 1 });">+</div>
+                <div class="mod-button b3 no-select" ng-click="$event.stopPropagation(); onModRankClick({ mod: mod, rank: mod.Rank - 1 });">-</div>
+                <div class="mod-button b4 no-select" ng-click="$event.stopPropagation(); onModRankClick({ mod: mod, rank: 0 });">▼</div>
+            </div>
+        </div>
+    </div>
+</div>

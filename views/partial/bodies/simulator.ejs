@@ -1,6 +1,6 @@
 <div id="body-content" class= "div-hide-loading transition-opacity">
     <div ng-controller="Tabs as tabs" class="container">
-        <%- include('../../partial/generic/survey', {}) %>
+        <%- include('../../partial/generic/survey', { App: App }) %>
 
         <div class="row">
             <div class="btn-group btn-group-justified padding-100-t col-12">
@@ -70,13 +70,22 @@
                             {{weapons.ActiveWeapon.ReloadDuration | number : 1}}
                         </span>
                     </div>
-                    <div class="wep-stat clearfix">
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.FireRate > 0">
                         <span class="wep-stat-name">Fire Rate</span>
                         <span class="wep-stat-val">
                             <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseFireRate != weapons.ActiveWeapon.FireRate">
                                 {{weapons.ActiveWeapon.BaseFireRate | number : 1}} ▸ 
                             </span>
                             {{weapons.ActiveWeapon.FireRate | number : 1}}
+                        </span>
+                    </div>
+                    <div class="wep-stat clearfix" ng-show="weapons.ActiveWeapon.ChargeDelay > 0 || weapons.ActiveWeapon.FireRate <= 0">
+                        <span class="wep-stat-name">Charge Delay</span>
+                        <span class="wep-stat-val">
+                            <span ng-show="weapons.ShowBaseStats && weapons.ActiveWeapon.BaseChargeDelay != weapons.ActiveWeapon.ChargeDelay">
+                                {{weapons.ActiveWeapon.BaseChargeDelay | number : 1}} ▸ 
+                            </span>
+                            {{weapons.ActiveWeapon.ChargeDelay | number : 1}}
                         </span>
                     </div>
 
@@ -292,7 +301,8 @@
 
                     <div class="mod-box">
                         <div class="mod-box-item" ng-repeat="x in [].constructor(8) track by $index">
-                            <div class="mod-wrapper" ng-click="mods.PrepareMod($index);">
+                            <mod-card mod="mods.ActiveWeapon.Mods[$index]" on-click="mods.PrepareMod($index);" on-mod-rank-click="mods.SetModRank(mod, rank);" show-ranks="true"></mod-card>
+                            <!-- <div class="mod-wrapper" ng-click="mods.PrepareMod($index);">
                                 <img class="mod-border" ng-src="{{mods.ActiveWeapon.Mods[$index] != undefined ? mods.ActiveWeapon.Mods[$index].ModBorder : '/images/mods/_bg_none.png'}}">
                                 <div class="mod-center" ng-show="mods.ActiveWeapon.Mods[$index] != undefined">
                                     <img class="mod-image" ng-src="{{mods.ActiveWeapon.Mods[$index] != undefined ? '/images/mods/aero_periphery.png' : ''}}">
@@ -312,7 +322,7 @@
                                     </div>
                                     <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -362,7 +372,8 @@
                                 <input type="text" ng-model="mods.ModListFilter" placeholder="Filter Mods" style="margin-bottom: 15px; width: 100%;">
                                 <div class="modal-select">
                                     <span>
-                                        <div class="mod-wrapper" ng-click="mods.SetModObject(null);" style="display: inline-block; vertical-align: middle; margin: -15px;">
+                                        <mod-card mod="null" on-click="mods.SetModObject(null);" display-text="'Remove Mod'"></mod-card>
+                                        <!-- <div class="mod-wrapper" ng-click="mods.SetModObject(null);" style="display: inline-block; vertical-align: middle; margin: -15px;">
                                             <img class="mod-border" src="/images/mods/_bg_none.png">
                                             <div class="mod-center">
                                                 <svg class="mod-callout-svg" viewBox="0 0 100 16">
@@ -385,10 +396,12 @@
                                                 </div>
                                                 <img class="mod-polarity" src="">
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </span>
+
                                     <span ng-repeat='mod in mods.FilteredMods | filter:mods.ModListFilter | filter:(mods.ModRarityFilter >= 0 ? { Rarity: mods.ModRarityFilter } : undefined):true | filter:(mods.ModPolarityFilter >= 0 ? { Polarity: mods.ModPolarityFilter } : undefined):true'>
-                                        <div class="mod-wrapper" ng-click="mods.SetModObject(mod);" style="display: inline-block; vertical-align: middle; margin: -15px;">
+                                        <mod-card mod="mod" on-click="mods.SetModObject(mod);"></mod-card>
+                                        <!-- <div class="mod-wrapper" ng-click="mods.SetModObject(mod);" style="display: inline-block; vertical-align: middle; margin: -15px;">
                                             <img class="mod-border" ng-src="{{mod.ModBorder}}">
                                             <div class="mod-center">
                                                 <img class="mod-image" src="/images/mods/aero_periphery.png">
@@ -408,7 +421,7 @@
                                                 </div>
                                                 <img class="mod-polarity" src="/images/mods/_bg_common_madurai.png">
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </span>
                                 </div>
                             </div>

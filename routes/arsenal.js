@@ -5,11 +5,11 @@ var Properties = undefined;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('pages/index', Properties);
+    res.render('pages/arsenal', Properties);
 });
 
-router.get('/discord', function(req, res, next) {
-    res.redirect('https://discord.gg/DaVR72X');
+router.get('/:weapon', function(req, res, next) {
+    res.render('pages/arsenal', Properties);
 });
 
 module.exports.Router = router;

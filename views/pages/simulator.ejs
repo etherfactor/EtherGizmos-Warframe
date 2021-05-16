@@ -21,6 +21,8 @@
         <script src="/scripts/class-definitions/classes.js"></script>
 
         <script src="/scripts/pages/simulator.js"></script>
+
+        <script>window.$Websocket = { Http: parseInt('<%- WebsocketHttp %>'), Https: parseInt('<%- WebsocketHttps %>') }</script>
     </head>
 
     <body class="loading-data" ng-app="SimulatorApp">

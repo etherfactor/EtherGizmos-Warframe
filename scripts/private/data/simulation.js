@@ -1,3 +1,5 @@
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 var async = require('async');
 
 var conn = require('../sql/connection');
@@ -56,7 +58,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -90,7 +92,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -111,7 +113,11 @@ function UpdateWeapons() {
                                 weapons[rf.id].FiringModes[rf.line - 1] = firingMode;
                             }
 
-                            weapons[rf.id].FiringModes[rf.line - 1]
+                            /**
+                             * @type {import('../../public/class-definitions/classes').WeaponFiringMode}
+                             */
+                            var temp = weapons[rf.id].FiringModes[rf.line - 1];
+                            temp
                                 .SetName(rf.name)
                                 .SetDamageImpact(rf.impact)
                                 .SetDamagePuncture(rf.puncture)
@@ -132,7 +138,8 @@ function UpdateWeapons() {
                                 .SetCriticalMultiplier(rf.critical_multiplier)
                                 .SetStatusChance(rf.status_chance)
                                 .SetAmmoConsumption(rf.ammo_consumption)
-                                .SetIsBeam(rf.is_beam.readUIntBE(0, 1) ? true : false);
+                                .SetIsBeam(rf.is_beam.readUIntBE(0, 1) ? true : false)
+                                .SetChargeDelay(rf.charge_delay);
                         }
 
                         callback(null, 1);
@@ -145,7 +152,7 @@ function UpdateWeapons() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -206,7 +213,7 @@ function UpdateWeapons() {
         ],
         function(err, results) {
             Weapons = weapons;
-            console.log(`Updated weapons as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated weapons as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -223,7 +230,7 @@ function UpdateMods() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -254,11 +261,11 @@ function UpdateMods() {
             },
             function(callback) {
                 conn.query(
-                    `SELECT me.*, men.description FROM mod_effects me INNER JOIN mod_effect_names men ON men.id = me.effect_id ORDER BY me.id, me.line;`,
+                    `SELECT me.*, men.description, GROUP_CONCAT( CONCAT( mero.rank, ':', mero.value ) SEPARATOR ';' ) 'rank_overrides' FROM mod_effects me INNER JOIN mod_effect_names men ON men.id = me.effect_id LEFT OUTER JOIN mod_effect_rank_overrides mero ON me.id = mero.id AND me.line = mero.line GROUP BY me.id, me.line ORDER BY me.id, me.line;`,
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -271,9 +278,24 @@ function UpdateMods() {
                                 
                                 mods[rw.id] = mod;
                             }
-                            
+
                             mods[rw.id]
                                 .AddEffect(rw.effect_id, rw.value, rw.description);
+
+                            if (rw.rank_overrides != null) {
+                                /** @type {string[]} */
+                                var rankOverrides = rw.rank_overrides.split(';');
+
+                                for (var o = 0; o < rankOverrides.length; o++)
+                                {
+                                    var rankOverride = rankOverrides[o];
+                                    var rank = parseInt(rankOverride.split(':')[0]);
+                                    var power = parseFloat(rankOverride.split(':')[1]);
+
+                                    mods[rw.id]
+                                        .AddEffectRankOverride(rank, rw.effect_id, power);
+                                }
+                            }
                         }
 
                         callback(null, 1);
@@ -283,7 +305,7 @@ function UpdateMods() {
         ],
         function(err, results) {
             Mods = mods;
-            console.log(`Updated mods as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated mods as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -300,7 +322,7 @@ function UpdateModEffects() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -320,7 +342,7 @@ function UpdateModEffects() {
         ],
         function(err, results) {
             ModEffects = modEffects;
-            console.log(`Updated mod effects as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated mod effects as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -337,7 +359,7 @@ function UpdateEnemies() {
                     function(err, results) {
                         if (err)
                         {
-                            console.log(err);
+                            superconsole.log(superconsole.MessageLevel.ERROR_DEBUG, `$red:Encountered an error: $white,bright{${err}}`);
                             return;
                         }
 
@@ -372,7 +394,7 @@ function UpdateEnemies() {
         ],
         function(err, results) {
             Enemies = enemies;
-            console.log(`Updated enemies as of ${new Date().toString()}`,);
+            superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Updated enemies as of $white,bright{${new Date().toString()}}`,);
             resolve();
         });
     });
@@ -416,22 +438,48 @@ async function GetModById(id) {
     /** @type {import('../../public/class-definitions/classes').Mod} */
     var object = objects[id];
     if (object == null) {
-        console.log(`Found a mod that doesn't exist: ${id}`);
+        superconsole.log(superconsole.MessageLevel.ERROR, `$red:Found a mod that doesn't exist: $white,bright{${id}}`);
         return null;
     }
 
     object = $Classes.Mod.FromObject(object.ToObject());
+    object.SetRank(object.Ranks);
 
-    if (applyEffects != null) {
-        applyEffects = applyEffects.split(';');
-        for (var e = 0; e < applyEffects.length; e++)
+    if (applyEffects != undefined) {
+        applyEffects = applyEffects.split('&');
+
+        for (var a = 0; a < applyEffects.length; a++)
         {
-            var effect = applyEffects[e];
-            var effectType = effect.split(':')[0];
-            var effectPower = effect.split(':')[1];
-            
-            if (effectType != undefined && effectPower != undefined) {
-                object.AddEffect(effectType, effectPower, null);
+            var type = applyEffects[a].substring(0, applyEffects[a].indexOf(':'));
+            var effect = applyEffects[a].substring(applyEffects[a].indexOf(':') + 1, applyEffects[a].length);
+
+            switch (type) {
+                case ('r'):
+                    var rankNumber = parseInt(effect);
+                    if (!isNaN(rankNumber)) {
+                        object.SetRank(rankNumber);
+                    }
+                    break;
+
+                case ('e'):
+                    if (id != 'riven-mod')
+                        break;
+
+                    var modEffects = effect.split(';');
+                    for (var e = 0; e < modEffects.length; e++)
+                    {
+                        var modEffect = modEffects[e];
+                        var modEffectType = modEffect.split(':')[0];
+                        var modEffectPower = parseFloat(modEffect.split(':')[1]);
+                        
+                        if (isNaN(modEffectType) || isNaN(modEffectPower))
+                            continue;
+                        
+                        if (modEffectType != undefined && modEffectPower != undefined) {
+                            object.AddEffect(modEffectType, modEffectPower, '');
+                        }
+                    }
+                    break;
             }
         }
     }

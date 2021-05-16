@@ -1,3 +1,6 @@
+const path = require('path');
+const superconsole = require('../../../../../scripts/logging/superconsole');
+
 //Hack to let 'module' exist in front-end
 if (typeof module == 'undefined') {
     module = { exports: {} }
@@ -89,13 +92,13 @@ if (typeof window == 'undefined') {
 
                 //Up the thread count
                 MAIN.CurrentThreads++;
-                console.log('Threads:', MAIN.CurrentThreads);
+                superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Threads: $white,bright{${MAIN.CurrentThreads}}`);
 
                 //Run the simulation
                 simulation.Simulation.Run(simulation.Accuracy, simulation.Headshot).then(() => {
                     //When it finishes, lower the thread count, and queue up the next simulation
                     MAIN.CurrentThreads--;
-                    console.log('Threads:', MAIN.CurrentThreads);
+                    superconsole.log(superconsole.MessageLevel.INFORMATION, `$blue:Threads: $white,bright{${MAIN.CurrentThreads}}`);
                     MAIN.RunNextSimulation();
                 });
             });
@@ -161,8 +164,11 @@ if (typeof window == 'undefined') {
 
             //It's asynchronous
             return new Promise(function (resolve, reject) {
+                var thisScriptDir = __dirname;
+                var workerPath = path.join(__dirname, '../workers/simulation-runner.js');
+
                 //Create a worker thread
-                var w = new Worker('./scripts/@warframe/private/workers/simulation-runner.js', data);
+                var w = new Worker(workerPath, data);
 
                 //Whenever the main thread receives a message from the worker thread
                 w.on('message', (messageObject) => {
@@ -394,7 +400,7 @@ if (typeof window == 'undefined') {
             this.CurrentShotDelay = this.ShotDelay;
 
             /** @type {number} - Delay in seconds before shot is fired */
-            this.ChargeDelay = 0; //this needs to be set to the weapon's charge delay
+            this.ChargeDelay = weapon.ChargeDelay; //this needs to be set to the weapon's charge delay
 
             /** @type {number} - Remaining delay in seconds before the next shot is fired */
             this.CurrentChargeDelay = this.ChargeDelay; //this needs to be set to the weapon's charge delay
@@ -680,6 +686,12 @@ if (typeof window == 'undefined') {
                 var hunterChance = vigilanteChance
                     .Chance(hunterChanceChance, 'HunterMunitions');
 
+                //As well as Internal Bleeding mod bonuses
+                var internalBleedingChanceChance = this.Weapon.$_GetModdedProperty($Classes.ModEffect.INTERNAL_BLEEDING_EFFECT);
+                if (this.Weapon.$_GetModdedProperty($Classes.ModEffect.FIRE_RATE) < 2.5) {
+                    internalBleedingChanceChance *= 2;
+                }
+
                 //Do procs for this pellet
                 var procs = $_DoProcs(this.Weapon.Damage, statusChance, rngHandler, remainChance, '');
 
@@ -699,6 +711,18 @@ if (typeof window == 'undefined') {
                 //If the Vigilante check succeeded, up the critical level once more
                 if (criticalLevel > 0 && vigilanteChance.Result.VigilanteSetEffect) {
                     criticalLevel++;
+                }
+
+                //Loop through the procs and roll Internal Bleeding for every impact proc
+                for (var pe = 0; pe < procs.length; pe++) {
+                    if (procs[pe] == $Classes.DamageType.IMPACT) {
+                        var internalBleedingChance = vigilanteChance
+                            .Chance(internalBleedingChanceChance, 'InternalBleeding');
+
+                        if (internalBleedingChance.Result.InternalBleeding) {
+                            procs.push($Classes.DamageType.SLASH);
+                        }
+                    }
                 }
 
                 //Store the shot result
